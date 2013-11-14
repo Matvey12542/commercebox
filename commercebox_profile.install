@@ -1,0 +1,455 @@
+<?php
+
+/**
+ * @file
+ * Installation code for Commercebox.
+ */
+
+// Load inc file with creating functions.
+//require_once DRUPAL_ROOT . '/' . drupal_get_path('profile', 'commercebox_profile') . "/includes/commercebox_profile.additional_operations.inc";
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions to set up the site for this profile.
+ */
+function commercebox_profile_install() {
+  $t = get_t();
+  // Add text formats.
+  $filtered_html_format = array(
+    'format' => 'filtered_html',
+    'name' => 'Filtered HTML',
+    'weight' => 0,
+    'filters' => array(
+      // URL filter.
+      'filter_url' => array(
+        'weight' => 0,
+        'status' => 1,
+      ),
+      // HTML filter.
+      'filter_html' => array(
+        'weight' => 1,
+        'status' => 1,
+        'settings' => array(
+          'allowed_html' => '<a> <em> <strong> <cite> <blockquote> <code> <ul> <ol> <li> <dl> <dt> <dd> <p> <br>',
+          'filter_html_help' => 1,
+          'filter_html_nofollow' => 0,
+        ),
+      ),
+      // Line break filter.
+      'filter_autop' => array(
+        'weight' => 2,
+        'status' => 1,
+      ),
+      // HTML corrector filter.
+      'filter_htmlcorrector' => array(
+        'weight' => 10,
+        'status' => 1,
+      ),
+    ),
+  );
+  $filtered_html_format = (object) $filtered_html_format;
+  filter_format_save($filtered_html_format);
+
+  $full_html_format = array(
+    'format' => 'full_html',
+    'name' => 'Full HTML',
+    'weight' => 1,
+    'filters' => array(
+      // URL filter.
+      'filter_url' => array(
+        'weight' => 0,
+        'status' => 1,
+      ),
+      // Line break filter.
+      'filter_autop' => array(
+        'weight' => 1,
+        'status' => 1,
+      ),
+      // HTML corrector filter.
+      'filter_htmlcorrector' => array(
+        'weight' => 10,
+        'status' => 1,
+      ),
+    ),
+  );
+  $full_html_format = (object) $full_html_format;
+  filter_format_save($full_html_format);
+
+  // Enable the admin theme.
+  $theme_list = array(
+    'seven',
+    'commercebox_install',
+  );
+  theme_enable($theme_list);
+  variable_set('admin_theme', 'seven');
+  variable_set('node_admin_theme', '1');
+  variable_set('theme_default', 'commercebox_install');
+  module_enable($enable_modules);
+  // Insert default pre-defined node types into the database. For a complete
+  // list of available node type attributes, refer to the node type API
+  // documentation at: http://api.drupal.org/api/HEAD/function/hook_node_info.
+  $types = array(
+    array(
+      'type' => 'page',
+      'name' => $t('Basic page'),
+      'base' => 'node_content',
+      'description' => $t("Use <em>basic pages</em> for your static content, such as an 'About us' page."),
+      'custom' => 1,
+      'modified' => 1,
+      'locked' => 0,
+    ),
+    array(
+      'type' => 'article',
+      'name' => $t('Article'),
+      'base' => 'node_content',
+      'description' => $t('Use <em>articles</em> for time-sensitive content like news, press releases or blog posts.'),
+      'custom' => 1,
+      'modified' => 1,
+      'locked' => 0,
+    ),
+    array(
+      'type' => 'news',
+      'name' => $t('News'),
+      'base' => 'node_content',
+      'description' => '',
+      'custom' => 1,
+      'modified' => 1,
+      'locked' => 0,
+    ),
+  );
+
+  foreach ($types as $type) {
+    $type = node_type_set_defaults($type);
+    node_type_save($type);
+    node_add_body_field($type);
+  }
+
+  // Insert default pre-defined RDF mapping into the database.
+  $rdf_mappings = array(
+    array(
+      'type' => 'node',
+      'bundle' => 'page',
+      'mapping' => array(
+        'rdftype' => array('foaf:Document'),
+      ),
+    ),
+    array(
+      'type' => 'node',
+      'bundle' => 'article',
+      'mapping' => array(
+        'field_image' => array(
+          'predicates' => array('og:image', 'rdfs:seeAlso'),
+          'type' => 'rel',
+        ),
+        'field_tags' => array(
+          'predicates' => array('dc:subject'),
+          'type' => 'rel',
+        ),
+      ),
+    ),
+  );
+  foreach ($rdf_mappings as $rdf_mapping) {
+    rdf_mapping_save($rdf_mapping);
+  }
+
+  // Default "Basic page" to not be promoted and have comments disabled.
+  variable_set('node_options_page', array('status'));
+  variable_set('comment_page', COMMENT_NODE_HIDDEN);
+
+  // Don't display date and author information for Basic page nodes by default.
+  variable_set('node_submitted_page', FALSE);
+
+  // Enable user picture support and set the default to square thumbnail option.
+  variable_set('user_pictures', FALSE);
+  variable_set('user_picture_dimensions', '1024x1024');
+  variable_set('user_picture_file_size', '800');
+  variable_set('user_picture_style', 'thumbnail');
+
+  // Allow visitor account creation with administrative approval.
+  variable_set('user_register', USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL);
+
+  // Enable wysiwyg profile with custom settings.
+  // Full html.
+  $format = 'full_html';
+  $editor = 'tinymce';
+  $settings = array(
+    'default' => 1,
+    'user_choose' => 0,
+    'show_toggle' => 1,
+    'theme' => 'advanced',
+    'language' => 'en',
+    'buttons' => array(
+      'default' => array(
+        'bold' => 1,
+        'italic' => 1,
+        'underline' => 1,
+        'justifyleft' => 1,
+        'justifycenter' => 1,
+        'justifyright' => 1,
+        'justifyfull' => 1,
+        'bullist' => 1,
+        'numlist' => 1,
+        'outdent' => 1,
+        'indent' => 1,
+        'link' => 1,
+        'unlink' => 1,
+        'anchor' => 1,
+        'image' => 1,
+        'cleanup' => 1,
+        'forecolor' => 1,
+        'backcolor' => 1,
+        'blockquote' => 1,
+        'cut' => 1,
+        'copy' => 1,
+        'paste' => 1,
+        'removeformat' => 1,
+      ),
+      'directionality' => array(
+        'ltr' => 1,
+        'rtl' => 1,
+      ),
+      'font' => array(
+        'fontselect' => 1,
+        'fontsizeselect' => 1,
+        'styleselect' => 1,
+      ),
+      'insertdatetime' => array(
+        'insertdate' => 1,
+        'inserttime' => 1,
+      ),
+      'paste' => array(
+        'pastetext' => 1,
+        'pasteword' => 1,
+      ),
+      'searchreplace' => array(
+        'search' => 1,
+      ),
+      'table' => array(
+        'tablecontrols' => 1,
+      ),
+      'imce' => array(
+        'imce' => 1,
+      ),
+      'drupal' => array(
+        'break' => 1,
+      ),
+    ),
+    'toolbar_loc' => 'top',
+    'toolbar_align' => 'left',
+    'path_loc' => 'bottom',
+    'resizing' => 1,
+    'verify_html' => 1,
+    'preformatted' => 0,
+    'convert_fonts_to_spans' => 1,
+    'remove_linebreaks' => 1,
+    'apply_source_formatting' => 0,
+    'paste_auto_cleanup_on_paste' => 0,
+    'block_formats' => 'p,address,pre,h2,h3,h4,h5,h6,div',
+    'css_setting' => 'theme',
+    'css_path' => '',
+    'css_classes' => '',
+  );
+  db_insert('wysiwyg')
+    ->fields(
+      array(
+        'format' => $format,
+        'editor' => $editor,
+        'settings' => serialize($settings),
+      )
+    )
+    ->execute();
+
+  // Filtered html.
+  $format = 'filtered_html';
+  $editor = 'tinymce';
+  $settings = array(
+    'default' => 1,
+    'user_choose' => 0,
+    'show_toggle' => 1,
+    'theme' => 'advanced',
+    'language' => 'en',
+    'buttons' => array(
+      'default' => array(
+        'bold' => 1,
+        'italic' => 1,
+        'anchor' => 1,
+        'cleanup' => 1,
+        'cut' => 1,
+        'copy' => 1,
+        'paste' => 1,
+      ),
+      'paste' => array(
+        'pastetext' => 1,
+        'pasteword' => 1,
+      ),
+      'table' => array(
+        'tablecontrols' => 1,
+      ),
+      'imce' => array(
+        'imce' => 1,
+      ),
+    ),
+    'toolbar_loc' => 'top',
+    'toolbar_align' => 'left',
+    'path_loc' => 'bottom',
+    'resizing' => 1,
+    'verify_html' => 1,
+    'preformatted' => 0,
+    'convert_fonts_to_spans' => 1,
+    'remove_linebreaks' => 1,
+    'apply_source_formatting' => 0,
+    'paste_auto_cleanup_on_paste' => 0,
+    'block_formats' => 'p,address,pre,h2,h3,h4,h5,h6,div',
+    'css_setting' => 'theme',
+    'css_path' => '',
+    'css_classes' => '',
+  );
+  db_insert('wysiwyg')
+    ->fields(
+      array(
+        'format' => $format,
+        'editor' => $editor,
+        'settings' => serialize($settings),
+      )
+    )
+    ->execute();
+
+  // Enable default permissions for system roles.
+  $filtered_html_permission = filter_permission_name($filtered_html_format);
+  user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, array(
+    'access content',
+    'access comments',
+    'search content',
+    'access checkout',
+    'view any commerce_product entity',
+    $filtered_html_permission)
+  );
+  user_role_grant_permissions(DRUPAL_AUTHENTICATED_RID, array(
+    'access content',
+    'access comments',
+    'post comments',
+    'search content',
+    'access checkout',
+    'skip comment approval',
+    'view any commerce_product entity',
+    $filtered_html_permission)
+  );
+
+  $admin_role = new stdClass();
+  $admin_role->name = 'administrator';
+  $admin_role->weight = 2;
+  user_role_save($admin_role);
+  user_role_grant_permissions($admin_role->rid, array_keys(module_invoke_all('permission')));
+  // Set this as the administrator role.
+  variable_set('user_admin_role', $admin_role->rid);
+
+  // Assign user 1 the "administrator" role.
+  db_insert('users_roles')
+    ->fields(array('uid' => 1, 'rid' => $admin_role->rid))
+    ->execute();
+
+  // Update the menu router information.
+  menu_rebuild();
+
+  // Disable the Advanced Help module nag message until it's production ready.
+  variable_set('views_hide_help_message', TRUE);
+}
+
+/**
+ * Implements hook_install_tasks_alter().
+ */
+function commercebox_profile_install_tasks_alter(&$tasks, $install_state) {
+  // Set the installation distribution name.
+  global $install_state;
+  $install_state['profile_info']['distribution_name'] = 'CommerceBox';
+  // Set the installation theme.
+  if ($GLOBALS['theme'] != 'commercebox_install') {
+    unset($GLOBALS['theme']);
+    drupal_static_reset();
+    $GLOBALS['conf']['maintenance_theme'] = 'commercebox_install';
+    _drupal_maintenance_theme();
+  }
+}
+
+
+/**
+ * Initialise the batch context.
+ */
+//function commercebox_profile_batch_init_context(&$context, &$start, &$end, $items) {
+//  if (!isset($context['sandbox']['progress'])) {
+//    if (!empty($context['sandbox']['op_type']) &&
+//    function_exists("commercebox_profile_{$context['sandbox']['op_type']}_info")) {
+//
+//      $context['sandbox']['info'] = call_user_func("commercebox_profile_{$context['sandbox']['op_type']}_info");
+//    }
+//    $context['sandbox']['progress'] = 0;
+//  }
+//  $start = $context['sandbox']['progress'];
+//  $end = $start + $items;
+//}
+//
+///**
+// * Update the batch context.
+// */
+//function commercebox_profile_batch_update_context(&$context, $end, $total, $msg) {
+//  if ($end > $total) {
+//    $context['finished'] = 1;
+//    return;
+//  }
+//  $context['message'] = "{$msg}: {$end} of {$total}";
+//  $context['sandbox']['progress'] = $end;
+//  $context['finished'] = $end / $total;
+//}
+//
+///**
+// * Run cron to aply rules.
+// */
+//function commercebox_profile_update_7003() {
+//  drupal_cron_run();
+//}
+
+
+/**
+ * Implements hook_install_tasks().
+ */
+function commercebox_profile_install_tasks($install_state) {
+  // Remove any status message.
+  drupal_get_messages('status', TRUE);
+
+  $tasks['commercebox_profile_import_content'] = array(
+    'display_name' => st('Import content'),
+    'type' => 'batch',
+  );
+
+  return $tasks;
+}
+
+
+/**
+ * Task callback: return a batch API array with the products to be imported.
+ */
+function commercebox_profile_import_content() {
+  // Run all available migrations.
+  $migrations = migrate_migrations();
+  foreach ($migrations as $machine_name => $migration) {
+    $operations[] = array('_commercebox_profile_import', array($machine_name, t('Importing content.')));
+  }
+
+  $batch = array(
+    'title' => t('Importing content'),
+    'operations' => $operations,
+  );
+
+  return $batch;
+}
+
+
+/**
+ * BatchAPI callback.
+ */
+function _commercebox_profile_import($operation, $type, &$context) {
+  $context['message'] = t('@operation', array('@operation' => $type));
+  $migration =  Migration::getInstance($operation);
+  $migration->processImport();
+}

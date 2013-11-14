@@ -1,0 +1,51 @@
+<?php
+/**
+ * @file
+ * Undone module for collecting information about available updates.
+ */
+
+define('COMMERCEBOX_REPORT_URL', 'http://commercebox.drupalcompany.com/xmlrpc.php');
+
+/**
+ * Implements hook_init().
+ */
+function commercebox_connector_init() {
+  // if (!variable_get('commercebox_install', FALSE)) {
+  // $source = array(
+  // 'host' => $_SERVER['HTTP_HOST'],
+  // 'date' => REQUEST_TIME,
+  // );
+  // $responce = xmlrpc('http://commercebox.drupalcompany.com/xmlrpc.php',
+  // array('commercebox.saveInstallSource' => array($source))
+  // );
+  // if ($responce) {
+  // variable_set('commercebox_install', TRUE);
+  // }
+  // }
+}
+
+/**
+ * Implements of hook_xmlrpc().
+ */
+function commercebox_connector_xmlrpc() {
+  $methods[] = array(
+    'commercebox.saveInstallSource',
+    'commercebox_connector_save_install',
+    array('boolean', 'array'),
+    t('Save information about instalation sourse'),
+  );
+  return $methods;
+}
+
+/**
+ * Callback function for hook_xmlrpc().
+ */
+function commercebox_connector_save_install($sourse) {
+  $reponse = db_insert('commercebox_istallation')
+    ->fields(array(
+      'host' => $sourse['host'],
+      'date' => $sourse['date'],
+    ))
+    ->execute();
+  return $reponse;
+}

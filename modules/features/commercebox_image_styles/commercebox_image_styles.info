@@ -1,0 +1,7 @@
+name = CommerceBox: Image Styles
+core = 7.x
+package = Base
+dependencies[] = image
+features[features_api][] = api:2
+features[image][] = 450x460_retina
+features[image][] = x_350

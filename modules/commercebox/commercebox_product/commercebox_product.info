@@ -1,0 +1,10 @@
+name = CommerceBox Product
+description = "Extends Commerce Product functionality"
+package = CommerceBox
+core = 7.x
+
+dependencies[] = commerce_backoffice
+dependencies[] = physical
+dependencies[] = features
+dependencies[] = options
+dependencies[] = taxonomy

@@ -1,0 +1,77 @@
+<?php
+
+
+/**
+ * Implements hook_menu().
+ */
+function commercebox_product_menu() {
+  $items = array();
+
+  // Top level "CommerceBox" container.
+  $items['admin/commercebox'] = array(
+    'title' => 'CommerceBox',
+    'description' => 'Administer your CommerceBox store.',
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('access administration pages'),
+    'file path' => drupal_get_path('module', 'system'),
+    'file' => 'system.admin.inc',
+    'weight' => -7,
+  );
+  $items['admin/commercebox/product-type'] = array(
+    'title' => 'Product types',
+    'description' => 'Configure CommerceBox product types.',
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('access administration pages'),
+    'weight' => 40,
+    'file path' => drupal_get_path('module', 'system'),
+    'file' => 'system.admin.inc',
+  );
+  $items['admin/commercebox/product-type/add'] = array(
+    'title' => 'Create product type',
+    'description' => 'Create and configure new product type.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('commercebox_product_type_form', commerce_product_ui_product_type_new()),
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'includes/commercebox_product_type.inc'
+  );
+
+  foreach (commerce_product_types() as $type => $product_type) {
+    // Convert underscores to hyphens for the menu item argument.
+    $type_arg = strtr($type, '_', '-');
+
+    $items['admin/commercebox/product-type/' . $type_arg] = array(
+      'title' => $product_type['name'],
+      'description' => 'Create and configure new product type.',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('commercebox_product_type_form', $type),
+      'access arguments' => array('access administration pages'),
+      'file' => 'includes/commercebox_product_type.inc'
+    );
+  }
+
+  $items['admin/commercebox/config'] = array(
+    'title' => 'Configuration',
+    'description' => 'Configure CommerceBox store setting.',
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 50,
+    'file path' => drupal_get_path('module', 'system'),
+    'file' => 'system.admin.inc',
+  );
+
+  return $items;
+}
+
+
+/**
+ * Implements hook_commerce_product_type_delete().
+ */
+function commercebox_product_commerce_product_type_delete($product_type, $skip_reset) {
+  $types = commerce_product_reference_node_types();
+  if (isset($types[$product_type['type']])) {
+    node_type_delete($product_type['type']);
+    variable_del('node_preview_' . $product_type['type']);
+  }
+}

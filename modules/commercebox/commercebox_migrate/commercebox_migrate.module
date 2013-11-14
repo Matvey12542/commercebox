@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * Implements hook_migrate_api().
+ */
+function commercebox_migrate_migrate_api() {
+  $api = array(
+    'api' => 2,
+    'migrations' => array(
+      'CommerceBoxPages' => array('class_name' => 'CommerceBoxPages'),
+      'CommerceBoxBanners' => array('class_name' => 'CommerceBoxBanners'),
+      'CommerceBoxNews' => array('class_name' => 'CommerceBoxNews'),
+      'CommerceBoxCatalog' => array('class_name' => 'CommerceBoxCatalog'),
+      'CommerceBoxProductBase' => array('class_name' => 'CommerceBoxProductBase'),
+      'CommerceBoxProductDisplay' => array('class_name' => 'CommerceBoxProductDisplay'),
+    ),
+  );
+  return $api;
+}

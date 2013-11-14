@@ -1,0 +1,9 @@
+name = CommerceBox Migrate
+description = Provides CommerceBox Migrate handlers and base migrations.
+package = CommerceBox
+core = 7.x
+
+dependencies[] = migrate
+dependencies[] = commerce_migrate
+
+files[] = commercebox_migrate.migrate.inc

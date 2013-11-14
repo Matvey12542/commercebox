@@ -1,0 +1,596 @@
+<?php
+
+define('COMMERCEBOX_THEMES_SERVER', 1);
+define('COMMERCEBOX_MODULES_SERVER', 2);
+
+/**
+ * Implements hook_apps_servers_info().
+ *
+ * Add the server CommerceBox apps.
+ */
+function commercebox_apps_apps_servers_info() {
+  return array(
+    'cb_apps' => array(
+      'title' => 'CommerceBox APPS server',
+      'description' => 'Apps for CommerceBox distribution',
+      'manifest' => 'http://appserver.commercebox.drupalcompany.com/app/query/' . COMMERCEBOX_THEMES_SERVER,
+    ),
+    'cb_mod' => array(
+      'title' => 'CommerceBox APPS server module',
+      'description' => 'Apps for CommerceBox module distribution',
+      'manifest' => 'http://appserver.commercebox.drupalcompany.com/app/query/' . COMMERCEBOX_MODULES_SERVER,
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu_alter().
+ */
+function commercebox_apps_menu_alter(&$items) {
+  $items['admin/apps']['page callback'] = 'drupal_get_form';
+  $items['admin/apps']['page arguments'] = array('commercebox_apps_apps_form');
+}
+
+// Take app from server.
+function commercebox_apps_manifest($server) {
+  $manifests = &drupal_static(__FUNCTION__);
+  require_once DRUPAL_ROOT . '/includes/install.inc';
+  if (empty($manifests[$server['name']]) && !isset($manifests[$server['name']]['error'])) {
+    // Get manifest from server.
+    $manifest = apps_request_manifest($server);
+    // If there is an error with the manifest jump out now.
+    if (isset($manifest['error'])) {
+      return $manifest;
+    }
+    $modules = system_rebuild_module_data();
+    $apps = array();
+    foreach($manifest['apps'] as $app) {
+      $current_app_module = isset($modules[$app['machine_name']]) ? $modules[$app['machine_name']] : FALSE;
+      $app['enabled'] = $current_app_module && $current_app_module->status;
+      $app['incompatable'] = FALSE;
+      $app['installed'] = (bool) $current_app_module;
+      $app['dep_installed'] = TRUE;
+      $app['disabled'] = $current_app_module && empty($current_app_module->status) && $current_app_module->schema_version > SCHEMA_UNINSTALLED;
+      $app['featured'] = ($app['machine_name'] == $manifest['featured app']);
+      $app['server'] = $server;
+      $app['dependencies'] = isset($app['dependencies']) ? $app['dependencies'] : array();
+      $app['libraries'] = isset($app['libraries']) ? $app['libraries'] : array();
+      $app['themes'] = isset($app['themes']) ? $app['themes'] : array();
+      // Add info to dependencies.
+      commercebox_apps_put_info($app, 'dependencies');
+      // Add info to themes.
+      commercebox_apps_put_info($app, 'themes');
+      if (isset($app['libraries'])) {
+        $profile = variable_get('install_profile', 'standard');
+        $profile_path = drupal_get_path('profile', $profile);
+        foreach($app['libraries'] as $name_version => $downloadable) {
+          $info = array(
+            'downloadable' => $downloadable,
+            'version' => array('name' => $name_version),
+            'status' => APPS_INSTALLABLE,
+            'incompatable' => 0,
+            'enabled' => 0,
+            'installed' => is_dir(DRUPAL_ROOT . "/sites/all/libraries/$name_version") || is_dir($profile_path . "/libraries/$name_version"),
+          );
+          $app['libraries'][$name_version] = $info;
+        }
+      }
+      $app['status'] = $app['incompatable'] ? APPS_INCOMPATIBLE : (!$app['installed'] || !$app['dep_installed'] ? APPS_INSTALLABLE : ($app['enabled'] ? APPS_ENABLED : APPS_DISABLED));
+      $apps[$app['machine_name']] = $app;
+
+    }
+    // Overide json apps with our inhanced apps.
+    apps_add_app_info($apps);
+    $manifest['apps'] = $apps;
+    $manifests[$server['name']] = $manifest;
+  }
+  return $manifests[$server['name']];
+}
+
+/**
+ * Chooses info modules and themes are installed.
+ *
+ * @param array $app
+ *   App data.
+ *
+ * @param string $type
+ *   App type.
+ */
+function commercebox_apps_put_info(&$app, $type) {
+  if ($type === 'themes') {
+    $components = system_rebuild_theme_data();
+  }
+  else {
+    $components = system_rebuild_module_data();
+  }
+  foreach ($app[$type] as $name_version => $downloadable) {
+    $version = drupal_parse_dependency($name_version);
+    $name = $version['name'];
+    // Check status of modules.
+    $current = isset($components[$name]) ? $components[$name] : FALSE;
+    $incompatable = $current ? (bool) drupal_check_incompatibility($version, $current->info['version']) : FALSE;
+    $installed = (bool) $current;
+    $enabled = $current && $current->status;
+    $status = $incompatable ? APPS_INCOMPATIBLE : (!$installed ? APPS_INSTALLABLE : ($enabled ? APPS_ENABLED : APPS_DISABLED));
+
+    if ($status == APPS_INCOMPATIBLE) {
+      // If any one module is incompatable then the app is incompatable.
+      $app['incompatable'] = TRUE;
+    }
+    if ($status == APPS_INSTALLABLE) {
+      // If any one module is installable then we are not installed yet.
+      $app['dep_installed'] = FALSE;
+    }
+    // Rebuild dep with new data.
+    $info = array(
+      'downloadable' => $downloadable,
+      'version' => $version,
+      'status' => $status,
+      'incompatable' => $incompatable,
+      'enabled' => $enabled,
+      'installed' => $installed,
+    );
+    unset($app[$type][$name_version]);
+    $app[$type][$version['name']] = $info;
+  }
+}
+
+/**
+ * Function commercebox_apps_apps_form.
+ */
+function commercebox_apps_apps_form($form, $form_state) {
+  $test = commercebox_apps_page_view();
+  $count_apps = 0;
+  foreach ($test as $value) {
+    $i = 1;
+    foreach ($value['apps'] as $key => $val) {
+      if ($key != '#theme') {
+        $link = apps_app_page_path($val);
+        $array_app[$key] = l($val['name'], $link);
+      }
+      $i++;
+    }
+    $apps_num[$count_apps] = $array_app;
+    unset($array_app);
+    $count_apps++;
+  }
+  foreach ($test[0]['apps'] as $def_key => $def_value) {
+    if (!empty($def_value['enabled']) && $def_key != '#theme') {
+      $default_theme = $def_key;
+    }
+  }
+  $default_module = array();
+  foreach ($test[1]['apps'] as $def_key => $def_value) {
+    if (!empty($def_value['enabled'])) {
+      $default_module[] = $def_key;
+    }
+  }
+  $get_default_modules = variable_get('modules', FALSE);
+  if ($get_default_modules) {
+    $default_module = $get_default_modules;
+    variable_del('modules');
+  }
+  $form['themes'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Choose theme you want to install'),
+    '#description' => commercebox_apps_banner_view($test[0]['apps']),
+  );
+  if (!isset($default_theme)) {
+    reset($test[0]['apps']);
+    $default_theme = key($test[0]['apps']);
+  }
+  $form['themes']['cb_apps'] = array(
+    '#type' => 'radios',
+    '#title' => t('Select only one theme'),
+    '#default_value' => $default_theme,
+    '#options' => $apps_num[0],
+    '#option_descriptions' => $test[0]['apps'],
+    '#after_build' => array('commercebox_apps_app_type_options'),
+  );
+  $form['modules'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Choose modules you want to install'),
+    '#description' => commercebox_apps_banner_view($test[1]['apps']),
+  );
+  $form['modules']['cb_mod'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Select modules'),
+    '#options' => $apps_num[1],
+    '#default_value' => $default_module,
+    '#option_descriptions' => $test[1]['apps'],
+    '#after_build' => array('commercebox_apps_app_type_options'),
+  );
+  return system_settings_form($form);
+}
+
+// Commercebox_apps_apps_form validation.
+function commercebox_apps_apps_form_validate(&$form, &$form_state) {
+  if (!commercebox_apps_installer_has_write_access()) {
+    drupal_set_message(t('You do not have sufficient permissions to install by webserver direct install. In order to assign these permissions, go to the root of your drupal install and type <br/><br/><strong>sudo chmod -R 777 sites/all</strong>'), 'error', FALSE);
+    variable_set('modules', array_values($form_state['values']['cb_mod']));
+  }
+  else {
+    commercebox_apps_app_install($form_state['values']);
+  }
+}
+
+// Install app.
+function commercebox_apps_app_install($values_apps) {
+  $servers_theme = commercebox_apps_apps_servers_info();
+  $servers_theme['cb_apps']['name'] = 'cb_apps';
+  $apps_dis_theme = commercebox_apps_manifest($servers_theme['cb_apps']);
+  foreach ($apps_dis_theme['apps'] as $app_theme_dis) {
+    if (($app_theme_dis['machine_name'] != $values_apps['cb_apps']) &&
+      !empty($app_theme_dis['enabled'])) {
+
+      $app_ar_dis[] = $app_theme_dis['machine_name'];
+    }
+  }
+  $servers = commercebox_apps_apps_servers_info();
+  $values_apps['cb_apps'] = array($values_apps['cb_apps'] => $values_apps['cb_apps']);
+  foreach ($servers as $key => $server_name) {
+    $server_name['name'] = $key;
+    $app_full = commercebox_apps_manifest($server_name);
+    foreach ($values_apps[$server_name['name']] as $key => $value) {
+      if (!empty($value) && empty($app_full['apps'][$value]['installed'])) {
+        $app_ar[] = $app_full['apps'][$value];
+      }
+      elseif (!empty($value) &&
+        !empty($app_full['apps'][$value]['installed']) &&
+        empty($app_full['apps'][$value]['enabled'])) {
+
+        $app_ar_en[] = $value;
+      }
+      elseif (empty($value) && !empty($app_full['apps'][$key]['installed'])) {
+        $app_ar_dis[] = $key;
+      }
+    }
+  }
+  if (!empty($app_ar_dis)) {
+    module_disable($app_ar_dis, FALSE);
+  }
+  elseif (!empty($app_ar_en)) {
+    module_enable($app_ar_en, TRUE);
+  }
+  elseif (!empty($app_ar)) {
+    commercebox_apps_download_apps_batch($app_ar);
+  }
+}
+
+/**
+ * Make the batch for downloading modules for app.
+ *
+ * Split out for use in apps.profile.inc
+ */
+function commercebox_apps_download_apps_batch($apps) {
+  $download_commands = array();
+  foreach ($apps as $app) {
+    $downloads = array();
+    // Find all downloads needed for dependencies.
+    foreach($app['dependencies'] as $dep) {
+      if(!$dep['installed']) {
+        $downloads[$dep['downloadable']]['for'][] = $dep['version']['name'];
+        $downloads[$dep['downloadable']]['type'] = 'modules';
+      }
+    }
+    foreach($app['libraries'] as $lib) {
+      if(!$lib['installed']) {
+        $downloads[$lib['downloadable']]['for'][] = $lib['version']['name'];
+        $downloads[$lib['downloadable']]['type'] = 'library';
+      }
+    }
+    foreach($app['themes'] as $theme) {
+      if (!$theme['installed']) {
+        $downloads[$theme['downloadable']]['for'][] = $theme['version']['name'];
+        $downloads[$theme['downloadable']]['type'] = 'themes';
+      }
+    }
+    // Add our core modules download.
+    if(!$app['installed']) {
+      $downloads[$app['downloadable']]['for'][] = $app['machine_name'];
+      $downloads[$app['downloadable']]['type'] = 'app';
+    }
+    // Foreach download find the url.
+    foreach($downloads as $key => $download) {
+      $downloads[$key]['url'] = $app['downloadables'][$key];
+      // Do a quick dirty pull of the name from the key.
+      $downloads[$key]['name'] = ($e = strpos($key, " ")) ? substr($key, 0, $e) : $key;
+    }
+    foreach($downloads as $download) {
+      $download_commands[] = array(
+        'commercebox_apps_apply_batch',
+        array(
+          $download['name'],
+          $download['url'],
+          $download['type'],
+        ),
+      );
+    }
+    foreach($downloads as $download) {
+      $downloaded_app_en[] = array(
+        'commercebox_apps_apply_batch_finished',
+        array(
+          $download['name'],
+          $download['type'],
+        ),
+      );
+    }
+  }
+  $download_commands = array_merge($download_commands, $downloaded_app_en);
+  $batch = array(
+    'operations' => $download_commands,
+    'title' => t('Downloading modules'),
+    'init_message' => t('Preparing to download needed modules'),
+  );
+  batch_set($batch);
+}
+
+/*
+ * Pass though to update_manager_batch_project_get
+ * we need this becuase in a batch set the file param is for bouth the operations as well
+ * as the other callbackes
+ */
+function commercebox_apps_apply_batch($project, $url, $type, &$context) {
+  module_load_include("inc", "update", "update.manager");
+
+  // This is here to show the user that we are in the process of downloading.
+  if (!isset($context['sandbox']['started'])) {
+    $context['sandbox']['started'] = TRUE;
+    $context['message'] = t('Downloading %project', array('%project' => $project));
+    $context['finished'] = 0;
+    return;
+  }
+
+  // Actually try to download the file.
+  if (!($local_cache = update_manager_file_get($url))) {
+    $context['results']['errors'][$project] = t('Failed to download %project from %url', array('%project' => $project, '%url' => $url));
+    return;
+  }
+
+  // Extract it.
+  $extract_directory = commercebox_apps_extract_directory($type);
+  try {
+    update_manager_archive_extract($local_cache, $extract_directory);
+  }
+  catch (Exception $e) {
+    $context['results']['errors'][$project] = $e->getMessage();
+    return;
+  }
+  if ($type == 'app') {
+    $type = 'modules';
+  }
+  if ($type == 'library') {
+    $type = 'libraries';
+  }
+  copy_folder($extract_directory . '/' . $project, 'sites/all/' . $type . '/' . $project);
+
+  // Verify it.
+  $archive_errors = update_manager_archive_verify($project, $local_cache, $extract_directory);
+  $archive_errors = array();
+  if (!empty($archive_errors)) {
+    // We just need to make sure our array keys don't collide, so use the
+    // numeric keys from the $archive_errors array.
+    foreach ($archive_errors as $key => $error) {
+      $context['results']['errors']["$project-$key"] = $error;
+    }
+    return;
+  }
+
+  // Yay, success.
+  $context['results']['projects'][$type][$project] = $url;
+  $context['finished'] = 1;
+}
+
+/**
+ * Batch callback invoked when the download batch is completed.
+ *
+ * A pass though to update_manager_download_batch_finished
+ * but we set $_GET['destination'] to control the drupal_goto that is
+ * in that function
+ */
+function commercebox_apps_apply_batch_finished($results, $type) {
+  if ($type == 'themes') {
+    module_enable(array($results), FALSE);
+    drupal_flush_all_caches();
+  }
+  else {
+    module_enable(array($results), TRUE);
+    drupal_flush_all_caches();
+  }
+}
+
+// Temporary directory, where are downloaded apps.
+function commercebox_apps_extract_directory($type = '') {
+  $directory = _update_manager_extract_directory();
+  if ($type) {
+    $directory .= '/' . $type;
+    if (!file_exists($directory)) {
+      mkdir($directory);
+    }
+  }
+  return $directory;
+}
+
+// Function that copy directory $d1 to $d2.
+function copy_folder($d1, $d2, $upd = TRUE, $force = TRUE) {
+  if (is_dir($d1)) {
+    $d2 = mkdir_safe($d2, $force);
+    if (!$d2) {
+      fs_log("!!fail $d2");
+      return;
+    }
+    $d = dir($d1);
+    while (FALSE !== ($entry = $d->read())) {
+      if ($entry != '.' && $entry != '..') {
+        copy_folder("$d1/$entry", "$d2/$entry", $upd, $force);
+      }
+    }
+    $d->close();
+  }
+  else {
+    $ok = copy_safe($d1, $d2, $upd);
+    $ok = ($ok) ? "ok-- " : " -- ";
+    fs_log("{$ok}$d1");
+  }
+}
+
+// Function mkdir_safe.
+function mkdir_safe($dir, $force) {
+  if (file_exists($dir)) {
+    if (is_dir($dir)) {
+      return $dir;
+    }
+    elseif (!$force) {
+      return FALSE;
+    }
+    unlink($dir);
+  }
+  return (mkdir($dir, 0777, TRUE)) ? $dir : FALSE;
+}
+
+// Function copy_safe.
+function copy_safe($f1, $f2, $upd) {
+  $time1 = filemtime($f1);
+  if (file_exists($f2)) {
+    $time2 = filemtime($f2);
+    if ($time2 >= $time1 && $upd) {
+      return FALSE;
+    }
+  }
+  $ok = copy($f1, $f2);
+  if ($ok) {
+    touch($f2, $time1);
+  }
+  return $ok;
+}
+
+// Function fs_log.
+function fs_log($str) {
+  $log = fopen("./fs_log.txt", "a");
+  $time = date("Y-m-d H:i:s");
+  fwrite($log, "$str ($time)\n");
+  fclose($log);
+}
+
+/**
+ * Check whether Apps has write access to libraries and modules directories.
+ *
+ * @return boolean
+ */
+function commercebox_apps_installer_has_write_access() {
+  $libraries_dir = (is_dir('sites/all/libraries')) ? 'sites/all/libraries' : 'sites/all';
+  return is_writable(drupal_realpath($libraries_dir)) && is_writable(drupal_realpath(APPS_INSTALL_PATH));
+}
+
+// Function that render banner view.
+function commercebox_apps_banner_view($element) {
+  end($element);
+  $element = prev($element);
+  $link = apps_app_page_path($element);
+  $name = l($element['name'], $link);
+  $element['teaser'] = TRUE;
+  $rating = theme('apps_voting_widget', $element);
+  if($element['screenshots'][0]) {
+    $element['screenshots'][0]['style_name'] = 'apps_featured_screenshot';
+    $screenshot = theme('image_style', $element['screenshots'][0]);
+  }
+  if(!empty($element['logo'])) {
+    $logo = l(theme('image_style', $element['logo']), $link, array('html' => TRUE));
+  }
+  else {
+    $logo = FALSE;
+  }
+  $text_return =
+  '<div id="apps-featured-panel">
+    <div id="apps-featured-wrapper">
+      <div id="apps-featured">
+        <div class = "app-logo">' . $logo . '</div>
+        <div class="left">
+          <h1>' . $name . '</h1>' . drupal_render($rating) . '
+        </div>
+        <div class="app-screenshot">' . $screenshot . '<div class="screenshot-shadow"></div></div>
+      </div>
+    </div>
+  </div>';
+  return $text_return;
+}
+
+// Adding options view to form.
+function commercebox_apps_app_type_options($element) {
+  $key = 1;
+  foreach ($element['#option_descriptions'] as $elem) {
+    // Add a description to the link option.
+    if (isset($elem['name'])) {
+      $element[$elem['machine_name']]['#description'] = commercebox_apps_preprocess_view_app_teaser($elem);
+      $key++;
+    }
+  }
+  return $element;
+}
+
+// Taking all apps from servers.
+function commercebox_apps_page_view() {
+  $server_name = array_keys(commercebox_apps_apps_servers_info());
+  foreach ($server_name as $k => $value) {
+    apps_include('manifest');
+    $element[$k] = array(
+      '#theme' => 'apps_install_page',
+    );
+    // Find all apps.
+    try {
+      $apps = apps_apps($value, array(), TRUE);
+      $element[$k]['apps'] = $apps;
+      $featured_apps = apps_apps($value, array('featured' => TRUE));
+      if(!empty($featured_apps)) {
+        $element[$k]['featured_app'] = array_pop($featured_apps);
+      }
+    }
+    catch (Exception $e) {
+      drupal_set_message("There was the following error - " . $e->getMessage(), 'warning');
+    }
+  }
+  return $element;
+}
+
+// Theme for apps.
+function commercebox_apps_theme($existing, $type, $theme, $path) {
+  $theme = array(
+    'view_app_teaser' => array(
+      'render element' => 'app',
+      'template' => 'view-app-teaser',
+    ),
+  );
+  return $theme;
+}
+
+// Render one element for one app.
+function commercebox_apps_preprocess_view_app_teaser($vars) {
+  if (is_array($vars)) {
+    drupal_add_css(drupal_get_path('module', 'commercebox_apps') . '/theme/css/commercebox_apps.css');
+    $vars['logo']['width'] = 100;
+    $vars['logo']['height'] = 100;
+    $status = $vars['status'];
+    $status = $status === APPS_ENABLED ?
+      'enabled' :
+      (($status === APPS_DISABLED) ?
+        'disabled' :
+        (($status === APPS_INCOMPATIBLE) ?
+          'incompatible' :
+          'available'
+        )
+      );
+    $vars['teaser'] = TRUE;
+    //$rating = theme('apps_voting_widget', $vars);
+    $link = apps_app_page_path($vars);
+    $name = l($vars['name'], $link);
+    $action = l(t('Details'), $link);
+    $return =
+    '<div class="app-teaser-wrapper clearfix">
+      <div class="app-logo">' . theme('image', $vars['logo']) . '</div>
+      <div class="app-teaser">
+      <div class="app-status">' . $status . '</div>' . drupal_render($rating) . '
+      <div class="app-action">' . $action . '</div>
+    </div>';
+    return $return;
+  }
+}

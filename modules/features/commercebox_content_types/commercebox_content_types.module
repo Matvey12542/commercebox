@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the CommerceBox: Content types feature.
+ */
+
+include_once 'commercebox_content_types.features.inc';

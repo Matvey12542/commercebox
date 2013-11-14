@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function commercebox_apps_install() {
+  variable_set('site_frontpage', 'admin/apps');
+}

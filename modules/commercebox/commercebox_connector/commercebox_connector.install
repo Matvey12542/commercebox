@@ -1,0 +1,112 @@
+<?php
+
+/**
+ * @file
+ * Install file for commercebox_connector.module.
+ */
+
+// The minimum PHP memory recommended to install Acquia Drupal.
+define('COMMERCEBOX_DRUPAL_MINIMUM_PHP_MEMORY', '256M');
+// The maximum time in seconds a script is allowed to parse input data.
+define('COMMERCEBOX_DRUPAL_MAX_INPUT_TIME', 60);
+
+// The maximum time in seconds a script is allowed to run
+// before it is terminated by the parser.
+define('COMMERCEBOX_DRUPAL_MAX_EXECUTION_TIME', 60);
+
+/**
+ * Implements hook_requirements().
+ */
+function commercebox_connector_requirements($phase) {
+  $t = get_t();
+  $requirements = array();
+  $memory_limit = ini_get('memory_limit');
+  // Get current value of "max_execution_time"
+  $exec_time = ini_get('max_execution_time');
+  // Get current value of "max_input_time"
+  $input_time = ini_get('max_input_time');
+
+  switch ($phase) {
+    case 'runtime':
+      // During runtime, we can't override the PHP memory limit provided by
+      // Drupal core, so we supplement it with our own warning instead (but
+      // only when necessary to do so).
+      if ($memory_limit && parse_size($memory_limit) < parse_size(COMMERCEBOX_DRUPAL_MINIMUM_PHP_MEMORY)) {
+
+        $description = $t('Drupal core requires @drupal_php_memory_limit, but to take advantage of all the features of CommerceBox, we recommend @commercebox_php_memory_limit (or more).', array('@drupal_php_memory_limit' => DRUPAL_MINIMUM_PHP_MEMORY_LIMIT, '@commercebox_php_memory_limit' => COMMERCEBOX_DRUPAL_MINIMUM_PHP_MEMORY));
+        // Only append our instructions if they don't already have the ones
+        // from Drupal core appearing on the screen.
+        if (parse_size($memory_limit) >= parse_size(DRUPAL_MINIMUM_PHP_MEMORY_LIMIT)) {
+          if ($php_ini_path = get_cfg_var('cfg_file_path')) {
+            $description .= ' ' . $t('Increase the memory limit by editing the memory_limit parameter in the file %configuration-file and then restart your web server (or contact your system administrator or hosting provider for assistance).', array('%configuration-file' => $php_ini_path));
+          }
+          else {
+            $description .= ' ' . $t('Contact your system administrator or hosting provider for assistance with increasing your PHP memory limit.');
+          }
+        }
+        $requirements['commercebox_php_memory_limit'] = array(
+          'title' => $t('PHP memory limit (CommerceBox)'),
+          'description' => $description,
+          'severity' => REQUIREMENT_WARNING,
+          'value' => $t('@memory_minimum_limit (or more) is recommended', array('@memory_minimum_limit' => COMMERCEBOX_DRUPAL_MINIMUM_PHP_MEMORY)),
+        );
+      }
+      break;
+
+    case 'install':
+      if ($memory_limit && parse_size($memory_limit) < parse_size(COMMERCEBOX_DRUPAL_MINIMUM_PHP_MEMORY)) {
+        $requirements['memory_limit'] = commercebox_get_requirement('memory_limit', $memory_limit, COMMERCEBOX_DRUPAL_MINIMUM_PHP_MEMORY);
+      }
+      if ($exec_time && $exec_time < COMMERCEBOX_DRUPAL_MAX_EXECUTION_TIME) {
+        $requirements['max_execution_time'] = commercebox_get_requirement('max_execution_time', $exec_time, COMMERCEBOX_DRUPAL_MAX_EXECUTION_TIME);
+      }
+      if ($input_time && $input_time < COMMERCEBOX_DRUPAL_MAX_INPUT_TIME) {
+        $requirements['max_input_time'] = commercebox_get_requirement('max_input_time', $input_time, COMMERCEBOX_DRUPAL_MAX_INPUT_TIME);
+      }
+      $t = get_t();
+      // Ensure this module is compatible with the currently installed
+      // version of PHP.
+      if (version_compare(phpversion(), 5.0) < 0) {
+        $requirements['commercebox_php_version'] = array(
+          'description' => $t('The CommerceBox Connector module require a PHP version of at least 5.0.'),
+          'severity' => REQUIREMENT_ERROR,
+        );
+      }
+      break;
+  }
+
+  return $requirements;
+}
+
+/**
+ * Function commercebox_get_requirement.
+ */
+function commercebox_get_requirement($param, $current_limit, $minimum_limit) {
+  $t = get_t();
+  $name = 'PHP ' . str_replace('_', ' ', $param);
+  $sec = '';
+  if (is_int($minimum_limit)) {
+    $sec = $t(' seconds');
+  }
+  $description = $t('Your @title is currently set at %current_limit@sec. Increasing this to %minimum_limit@sec (or more) is recommended to help prevent errors in the installation process and later during operation of the site.',
+    array(
+      '@title' => $name,
+      '%current_limit' => $current_limit,
+      '%minimum_limit' => $minimum_limit,
+      '@sec' => $sec,
+    )
+  );
+  if ($php_ini_path = get_cfg_var('cfg_file_path')) {
+    $description .= ' ' . $t('Increase it by editing the %param parameter in the file %configuration-file and then restart your web server (or contact your system administrator or hosting provider for assistance).', array('%param' => $param, '%configuration-file' => $php_ini_path));
+  }
+  else {
+    $description .= ' ' . $t('Contact your system administrator or hosting provider for assistance with increasing your %param.', array('%param' => $param));
+  }
+  $requirements = array(
+    'title' => $t('@title (CommerceBox)', array('@title' => $name)),
+    'description' => $description,
+    'severity' => REQUIREMENT_WARNING,
+    'value' => $t('@minimum_limit @sec(or more) is recommended', array('@minimum_limit' => $minimum_limit, '@sec' => $sec)),
+  );
+  return $requirements;
+}

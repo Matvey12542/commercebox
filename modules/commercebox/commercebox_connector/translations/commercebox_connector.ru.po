@@ -1,0 +1,118 @@
+# $Id$
+#
+# Russian translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  commercebox_connector.module: n/a
+#  commercebox_connector.install: n/a
+#  commercebox_connector.info: n/a
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2013-05-10 14:29+0300\n"
+"PO-Revision-Date: 2013-05-10 14:29+0300\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Russian <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=((((n%10)==1)&&((n%100)!=11))?(0):(((((n%10)>=2)&&((n%10)<=4))&&(((n%100)<10)||((n%100)>=20)))?(1):2));\n"
+
+#: commercebox_connector.module:33
+msgid "Save information about instalation sourse"
+msgstr ""
+"Сохранить информацию о источнике "
+"инсталляции "
+
+#: commercebox_connector.install:32
+msgid "Drupal core requires @drupal_php_memory_limit, but to take advantage of all the features of CommerceBox, we recommend @commercebox_php_memory_limit (or more)."
+msgstr ""
+"Drupal ядро требует @drupal_php_memory_limit, но "
+"чтобы воспользоваться всеми "
+"возможностями CommerceBox, мы рекомендуем "
+"@commercebox_php_memory_limit (или более)."
+
+#: commercebox_connector.install:37
+msgid "Increase the memory limit by editing the memory_limit parameter in the file %configuration-file and then restart your web server (or contact your system administrator or hosting provider for assistance)."
+msgstr ""
+"Увеличьте лимит памяти путем "
+"редактирования параметра memory_limit в "
+"файле %configuration-file и перезапустите "
+"веб-сервер (или обратитесь к "
+"системному администратору или "
+"хостинг-провайдеру за помощью)."
+
+#: commercebox_connector.install:40
+msgid "Contact your system administrator or hosting provider for assistance with increasing your PHP memory limit."
+msgstr ""
+"Обратитесь к вашему системному "
+"администратору или "
+"хостинг-провайдеру за помощью в "
+"увеличении PHP ограничение памяти."
+
+#: commercebox_connector.install:44
+msgid "PHP memory limit (CommerceBox)"
+msgstr "PHP ограничение памяти (CommerceBox)"
+
+#: commercebox_connector.install:47
+msgid "@memory_minimum_limit (or more) is recommended"
+msgstr "рекомендуется @memory_minimum_limit (или более)"
+
+#: (duplicate) commercebox_connector.install:66 
+msgid "The CommerceBox Connector module require a PHP version of at least 5.0."
+msgstr ""
+"Для модуль CommerceBox Connector требуется PHP "
+"версии как минимум 5.0."
+
+#: (duplicate) commercebox_connector.install:84 
+msgid " seconds"
+msgstr ""
+
+#: (duplicate) commercebox_connector.install:86 
+msgid "Your @title is currently set at %current_limit@sec. Increasing this to %minimum_limit@sec (or more) is recommended to help prevent errors in the installation process and later during operation of the site."
+msgstr ""
+"На данный момент @title для вас ограничен "
+"значением %current_limit@sec. Рекомендуется "
+"увеличение до %minimum_limit@sec (или более), "
+"чтобы помочь предотвратить ошибки в "
+"процессе установки, а затем и в "
+"процессе работы сайта."
+
+#: (duplicate) commercebox_connector.install:88 
+msgid "Increase it by editing the %param parameter in the file %configuration-file and then restart your web server (or contact your system administrator or hosting provider for assistance)."
+msgstr ""
+"Увеличьте его путем редактирования "
+"параметра %param в файле %configuration-file и "
+"перезапустите веб-сервер (или "
+"обратитесь к системному "
+"администратору/хостинг-провайдеру за "
+"помощью)."
+
+#: (duplicate) commercebox_connector.install:91 
+msgid "Contact your system administrator or hosting provider for assistance with increasing your %param."
+msgstr ""
+
+#: (duplicate) commercebox_connector.install:94 
+msgid "@title (CommerceBox)"
+msgstr ""
+
+#: (duplicate) commercebox_connector.install:97 
+msgid "@minimum_limit @sec(or more) is recommended"
+msgstr ""
+
+#: commercebox_connector.info:0
+msgid "CommerceBox Connector"
+msgstr "CommerceBox Connector"
+
+#: commercebox_connector.info:0
+msgid "Allows Drupal to checks for updates to CommerceBox modules."
+msgstr ""
+"Позволяет Drupal проверку наличия "
+"обновлений для модулей CommerceBox."
+
+#: commercebox_connector.info:0
+msgid "CommerceBox"
+msgstr "CommerceBox"
+

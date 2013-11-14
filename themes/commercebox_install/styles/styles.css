@@ -1,0 +1,308 @@
+/* $Id: styles.css,v 1.1.2.2.2.1 2011/01/11 01:08:49 dvessel Exp $ */
+
+h1#site-name {
+  margin-bottom: 0;
+}
+#site-header,
+#site-subheader,
+#footer-region,
+.column,
+.node,
+.comment,
+.block {
+  margin-bottom: 1.5em;
+}
+#content a {
+  color: #3f74bf;
+  text-decoration:none;
+}
+a:hover {
+  text-decoration:underline;
+}
+ul.main-menu,
+ul.secondary-menu {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+ul {
+  margin-left:25px;
+}
+/**
+ ** All inputs
+*/
+input[type='text'],
+input[type='password'],
+textarea.form-textarea {
+  height:33px;
+  width:529px;
+  border: 1px solid;
+  font-size: 18px;
+  margin: 15px 0 10px;
+  border: 1px solid #BEBABA;
+}
+div textarea.form-textarea {
+  height:100px;
+}
+#page input:focus,
+#page textarea.form-textarea:focus {
+  border: 1px solid #0B6ABB;
+  outline: 0;
+  color:#333;
+}
+.grippie {
+ width: 528px;
+}
+input.form-checkbox,
+input.form-radio {
+  margin-top:0;
+}
+.form-type-password input {
+  width: 217px;
+}
+div.form-item div.password-suggestions {
+  width: 515px;
+}
+.password-strength {
+ margin-top:40px;
+}
+/**
+ ** Content
+*/
+body {
+  background: #333;
+  min-width: 945px;
+  padding: 20px;
+}
+#page {
+  background: url('../i/bg.jpg');
+  color: #333;
+  font: 14px/1.5 Arial, Helvetica, sans-serif;
+  min-height: 925px;
+  position: relative;
+}
+#header,
+.page-wrapper {
+  margin:0 auto;
+  overflow:hidden;
+  width:1200px;
+}
+#logo {
+  float:left;
+  margin: 90px 120px 40px auto;
+}
+#content {
+  float: right;
+  width: 860px;
+}
+.page-title {
+  padding-top:82px;
+  font-size: 29px;
+}
+.fieldset-legend {
+  display:block;
+  font: bold 16px/1 Arial,Helvetica,sans-serif;
+  padding-bottom: 15px;
+}
+.sidebar {
+  clear:both;
+  float:left;
+  margin: -5px 20px 0 0;
+  overflow:hidden;
+}
+#console {
+  margin-top: -20px;
+}
+.message {
+  margin-top:10px;
+}
+#install-select-locale-form input {
+  margin-top:0;
+}
+.form-submit {
+  background: #0E6EC4;
+  border: none;
+  border-radius: 3px;
+  color: #FFF;
+  font-size:15px;
+  height:30px;
+  line-height:1;
+  padding: 0 15px;
+  margin-bottom: 60px;
+}
+#edit-save {
+  margin-right:20px;
+}
+#edit-delete {
+ margin-bottom: 20px;
+}
+.form-submit:hover {
+  cursor:pointer;
+}
+.form-item .description,
+.fieldset-description {
+  color: #636060;
+  font-size:14px;
+  width:533px;
+}
+#commercebox-profile-select-test-content .description {
+  color: #333;
+}
+.install-configure-form .messages.warning,
+.install-configure-form .messages.error,
+.install-configure-form .messages.status {
+  width:470px;
+}
+/**
+ ** Menu
+*/
+.task-list {
+  font-size: 14px;
+  list-style-type: none;
+  margin: -3px 0 -8px 0;
+  overflow:hidden;
+}
+.task-list li {
+  background: url(../i/menu.png) repeat-y 0px 22px;
+  color: #a5cef1;
+  line-height:30px;
+  padding-left: 45px;
+}
+.task-list li.active {
+  color: #0F7AD5;
+  background: url(../i/active-sprt.png) no-repeat 0px -2px;
+}
+.task-list li.active:first-child {
+  background: url(../i/active-sprt.png) no-repeat 0px -38px;
+}
+.task-list li.done:first-child {
+ background-position-y : -2px;
+}
+.task-list li.done {
+  background: url(../i/done.png) no-repeat 0px -4px;
+  color: #0f7ad5;
+}
+.task-list li.done:last-child {
+  margin-bottom: -1px;
+}
+
+/**
+ ** Progress bar
+*/
+div.progress .bar {
+  margin: 0;
+}
+.progress .filled {
+  background: -webkit-linear-gradient(left, #F5F4EF, #0072B9);
+}
+
+/* Mystic item, which writes Test content, and have position fixed  */
+.sticky-header {
+  display:none;
+}
+/**
+ ** Test content
+*/
+.sticky-enabled.tableheader-processed.sticky-table tbody .form-item {
+  font-size:24px;
+  color: #0f7ad5;
+}
+.sticky-enabled.tableheader-processed.sticky-table thead {
+  background: #0f7ad5;
+  color: #fff;
+}
+.commercebox-profile-select-test-content .sticky-enabled.tableheader-processed.sticky-table thead th:nth-child(2) {
+  padding-left:20px;
+}
+.commercebox-profile-select-test-content .sticky-enabled.tableheader-processed.sticky-table th:first-child {
+  border-right: 2px solid #64A9E4;
+}
+.sticky-enabled.tableheader-processed.sticky-table .odd {
+  background: #fff;
+}
+.sticky-enabled.tableheader-processed.sticky-table .even {
+  background: #e6e6e6;
+}
+.commercebox-profile-select-test-content .sticky-enabled.tableheader-processed.sticky-table td .form-item.form-type-checkbox input {
+  margin: 0 25px -30px 10px;
+}
+#edit-test-content-all {
+  margin: 0 25px 0 10px;
+}
+/**
+ ** Sprite positions
+*/
+.sticky-enabled.tableheader-processed.sticky-table td .form-item.form-type-item {
+  background: url(../i/install-spr.gif) no-repeat 0 7px;
+  display:block;
+  height:80px;
+  margin-top:15px;
+  padding-left: 90px;
+  white-space: normal;
+}
+.sticky-enabled.tableheader-processed.sticky-table tr:nth-child(2) .form-item.form-type-item {
+  background-position-y: -65px;
+}
+.sticky-enabled.tableheader-processed.sticky-table tr:nth-child(3) .form-item.form-type-item {
+  background-position-y: -150px;
+}
+.sticky-enabled.tableheader-processed.sticky-table tr:nth-child(4) .form-item.form-type-item {
+  background-position-y: -230px;
+}
+.sticky-enabled.tableheader-processed.sticky-table tr:nth-child(5) .form-item.form-type-item {
+  background-position-y: -302px;
+}
+.sticky-enabled.tableheader-processed.sticky-table tr:nth-child(6) .form-item.form-type-item {
+  background-position-y: -385px;
+}
+.sticky-enabled.tableheader-processed.sticky-table tr:nth-child(7) .form-item.form-type-item {
+  background-position-y: -462px;
+}
+.sticky-enabled.tableheader-processed.sticky-table tr:nth-child(8) .form-item.form-type-item {
+  background-position-y: -535px;
+}
+.sticky-enabled.tableheader-processed.sticky-table tr:nth-child(9) .form-item.form-type-item {
+  background-position-y: -620px;
+}
+.sticky-enabled.tableheader-processed.sticky-table tr:nth-child(10) .form-item.form-type-item {
+  background-position-y: -706px;
+}
+html.js fieldset.collapsed .fieldset-legend {
+  background-position: 5px 4px;
+}
+/**
+ ** Configure Profile table
+*/
+.commercebox-profile-configure-shipping-methods .sticky-enabled.tableheader-processed.sticky-table,
+.commercebox-profile-configure-shipping-methods .sticky-enabled.tableheader-processed.sticky-table thead th {
+  text-align:center;
+  vertical-align:middle;
+  padding: 0 5px;
+}
+.commercebox-profile-configure-shipping-methods .sticky-enabled.tableheader-processed.sticky-table {
+  width:530px;
+  border: 1px solid #CCC;
+}
+/**
+ ** Footer
+*/
+.footer-section {
+  bottom: 0;
+  font-weight:bold;
+  left: 50%;
+  margin-left: -73px;
+  position: absolute;
+  text-align: center;
+}
+.footer-section a:link {
+  text-decoration: none;
+  color: #333;
+}
+.footer-section a:visited {
+  text-decoration: none;
+  color: #333;
+}
+.footer-section a:hover {
+  text-decoration: underline;
+  color: #333;
+}

@@ -1,0 +1,7 @@
+name = CommerceBox apps view enable.
+description = "Enable app."
+package = CommerceBox
+core = 7.x
+
+dependencies[] = apps
+

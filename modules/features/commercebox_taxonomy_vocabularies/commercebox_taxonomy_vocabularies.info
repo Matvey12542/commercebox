@@ -1,0 +1,17 @@
+name = CommerceBox: Taxonomy Vocabularies
+description = Created default CommerceBox vocabularies.
+core = 7.x
+package = Base
+version = 7.x-1.0
+project = commercebox_taxonomy_vocabularies
+dependencies[] = commercebox_field_bases
+dependencies[] = features
+dependencies[] = image
+dependencies[] = jquery_colorpicker
+dependencies[] = taxonomy
+features[features_api][] = api:2
+features[field_instance][] = taxonomy_term-catalog-field_image
+features[field_instance][] = taxonomy_term-cb_color-field_colorpicker
+features[taxonomy][] = catalog
+features[taxonomy][] = cb_clothing_size
+features[taxonomy][] = cb_color

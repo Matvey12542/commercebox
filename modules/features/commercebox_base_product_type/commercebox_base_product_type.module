@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the CommerceBox: Base product type  feature.
+ */
+
+include_once 'commercebox_base_product_type.features.inc';
