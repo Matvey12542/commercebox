@@ -11,6 +11,10 @@ projects[admin_menu][version] = 3.0-rc4
 projects[admin_menu][subdir] = "contrib"
 projects[apps][version] = 1.0-beta7
 projects[apps][subdir] = "contrib"
+
+projects[apps][patch][] = "http://drupal.org/files/apps-add_themes_installation-1730160-18.patch"
+projects[apps][patch][] = "http://drupal.org/files/apps-fix_illegal_string_offset-1820266-9.patch"
+
 projects[commerce][version] = 1.8
 projects[commerce][subdir] = "contrib"
 projects[commerce_backoffice][version] = 1.3
