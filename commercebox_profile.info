@@ -133,6 +133,10 @@ dependencies[] = libraries
 ; Other
 dependencies[] = taxonomy_menu_block
 
+; CB admin menu and dashboard
+dependencies[] = commercebox_admin
+dependencies[] = commercebox_admin_dashboard
+
 files[] = commercebox_profile.profile
 files[] = includes/commercebox_profile.theme.inc
 files[] = includes/commercebox_profile.test_content.inc
