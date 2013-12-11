@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the CommerceBOX admin dashboard feature.
+ */
+
+include_once 'commercebox_admin_dashboard.features.inc';

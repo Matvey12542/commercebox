@@ -1,0 +1,6 @@
+name = CommerceBox admin
+description = "Administration for CommerceBox"
+package = CommerceBox
+core = 7.x
+
+dependencies[] = views

@@ -1,0 +1,82 @@
+<?php
+/**
+ * @file
+ * CommerceBOX admin module.
+ */
+
+// // Create a variable to store the path to this module
+// define('COMMERCEBOX_ADMIN_PATH', drupal_get_path('module', 'commercebox_admin'));
+
+// /**
+//  * Implements hook_theme_registry_alter().
+//  */
+// function commercebox_admin_theme_registry_alter(&$theme_registry) {
+//   $theme_registry_copy = $theme_registry;
+//   _theme_process_registry($theme_registry_copy, 'phptemplate', 'theme_engine', 'commercebox_admin', COMMERCEBOX_ADMIN_PATH);
+//   dpm($theme_registry_copy);
+//   $theme_registry += array_diff_key($theme_registry_copy, $theme_registry);
+//   // A list of templates the module will provide templates for
+//   $hooks = array('page');
+//   foreach ($hooks as $h) {
+//     // Add the key 'theme paths' if it doesn't exist in this theme's registry
+//     if (!isset($theme_registry[$h]['theme paths'])) {
+//       $theme_registry[$h]['theme paths'] = array();
+//     }
+//     //Shift this module's directory to the top of the theme path list
+//     if(is_array($theme_registry[$h]['theme paths'])) {
+//       $first_element = array_shift($theme_registry[$h]['theme paths']);
+//       if ($first_element) {
+//         array_unshift($theme_registry[$h]['theme paths'], $first_element, COMMERCEBOX_ADMIN_PATH);
+//       } else {
+//         array_unshift($theme_registry[$h]['theme paths'], COMMERCEBOX_ADMIN_PATH);
+//       }
+//     }
+//   }
+// }
+
+/**
+ * Implements hook_theme().
+ */
+function commercebox_admin_theme(){
+  return array(
+    'admin_dash_page' =>  array(
+      'template' => 'page',
+      'render element' => 'page'
+    ),
+  );
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function commercebox_admin_preprocess_page(&$variables, $hook) {
+  if (isset($variables['page']['content']['system_main']['#block']->theme) &&
+    $variables['page']['content']['system_main']['#block']->theme == 'seven') {
+
+    $variables['theme_hook_suggestions'][] = 'admin_dash_page';
+  }
+}
+
+
+
+/**
+ * Implements hook_page_build().
+ */
+function commercebox_admin_page_build(&$page) {
+  if (!user_access('access administration pages') || !path_is_admin(current_path())) {
+    return;
+  }
+  $site_frontpage = variable_get('site_frontpage', 'node');
+  $frontpage_link = l('CommerceBOX', $site_frontpage);
+  $menu_tree = menu_tree_all_data('menu-admin-menu');
+  $menu_expanded = menu_tree_output($menu_tree);
+  $menu_title = '<div id="menu-title">' . $frontpage_link . '</div>';
+  $page['page_bottom']['cb-admin-menu'] = array(
+    '#markup' => render($menu_expanded),
+    '#prefix' => '<div id="commercebox-menu">' . $menu_title,
+    '#suffix' => '</div>',
+  );
+  drupal_add_css(drupal_get_path('module', 'commercebox_admin') . '/css/cb-admin-menu.css', array(
+    'group' => CSS_DEFAULT,
+  ));
+}
