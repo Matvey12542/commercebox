@@ -27,6 +27,7 @@ function commercebox_admin_dashboard_views_default_views() {
   $handler->display->display_options['access']['type'] = 'perm';
   $handler->display->display_options['cache']['type'] = 'none';
   $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['query']['options']['query_comment'] = FALSE;
   $handler->display->display_options['exposed_form']['type'] = 'basic';
   $handler->display->display_options['pager']['type'] = 'some';
   $handler->display->display_options['pager']['options']['items_per_page'] = '10';
@@ -250,6 +251,7 @@ function commercebox_admin_dashboard_views_default_views() {
   $handler->display->display_options['access']['type'] = 'none';
   $handler->display->display_options['cache']['type'] = 'none';
   $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['query']['options']['query_comment'] = FALSE;
   $handler->display->display_options['exposed_form']['type'] = 'basic';
   $handler->display->display_options['pager']['type'] = 'some';
   $handler->display->display_options['pager']['options']['items_per_page'] = '10';
@@ -463,6 +465,7 @@ function commercebox_admin_dashboard_views_default_views() {
   $handler->display->display_options['access']['perm'] = 'access user profiles';
   $handler->display->display_options['cache']['type'] = 'none';
   $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['query']['options']['query_comment'] = FALSE;
   $handler->display->display_options['exposed_form']['type'] = 'basic';
   $handler->display->display_options['pager']['type'] = 'some';
   $handler->display->display_options['pager']['options']['items_per_page'] = '10';
@@ -622,6 +625,7 @@ function commercebox_admin_dashboard_views_default_views() {
   $handler->display->display_options['access']['type'] = 'none';
   $handler->display->display_options['cache']['type'] = 'none';
   $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['query']['options']['query_comment'] = FALSE;
   $handler->display->display_options['exposed_form']['type'] = 'basic';
   $handler->display->display_options['pager']['type'] = 'some';
   $handler->display->display_options['pager']['options']['items_per_page'] = '10';
@@ -721,7 +725,7 @@ function commercebox_admin_dashboard_views_default_views() {
   $handler->display->display_options['fields']['title_1']['field'] = 'title';
   $handler->display->display_options['fields']['title_1']['relationship'] = 'field_product';
   $handler->display->display_options['fields']['title_1']['label'] = 'Product title';
-  /* Field: Content: Term reference */
+  /* Field: Content: Catalog categories */
   $handler->display->display_options['fields']['field_catalog_reference']['id'] = 'field_catalog_reference';
   $handler->display->display_options['fields']['field_catalog_reference']['table'] = 'field_data_field_catalog_reference';
   $handler->display->display_options['fields']['field_catalog_reference']['field'] = 'field_catalog_reference';

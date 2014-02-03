@@ -1,0 +1,20 @@
+name = Tax reports
+description = Implements tax reports and provides an interface for viewing and managing them.
+package = Commerce (reporting)
+dependencies[] = commerce_price
+dependencies[] = commerce_tax
+core = 7.x
+
+; Views includes
+
+; Tests
+files[] = tests/commerce_reports_tax.test
+
+configure = admin/commerce/reports/tax
+
+; Information added by Drupal.org packaging script on 2013-12-23
+version = "7.x-4.x-dev"
+core = "7.x"
+project = "commerce_reports"
+datestamp = "1387782206"
+

@@ -177,6 +177,24 @@ function commercebox_admin_dashboard_menu_default_menu_links() {
     'weight' => 0,
     'parent_path' => 'admin/commerce/products',
   );
+  // Exported menu link: menu-admin-menu:admin/commercebox/filters
+  $menu_links['menu-admin-menu:admin/commercebox/filters'] = array(
+    'menu_name' => 'menu-admin-menu',
+    'link_path' => 'admin/commercebox/filters',
+    'router_path' => 'admin/commercebox/filters',
+    'link_title' => 'Catalog filters',
+    'options' => array(
+      'attributes' => array(
+        'title' => '',
+      ),
+    ),
+    'module' => 'menu',
+    'hidden' => 0,
+    'external' => 0,
+    'has_children' => 0,
+    'expanded' => 0,
+    'weight' => -42,
+  );
   // Exported menu link: menu-admin-menu:admin/commercebox/product-type
   $menu_links['menu-admin-menu:admin/commercebox/product-type'] = array(
     'menu_name' => 'menu-admin-menu',
@@ -250,7 +268,7 @@ function commercebox_admin_dashboard_menu_default_menu_links() {
     'external' => 0,
     'has_children' => 1,
     'expanded' => 0,
-    'weight' => -42,
+    'weight' => -41,
   );
   // Exported menu link: menu-admin-menu:admin/config/search
   $menu_links['menu-admin-menu:admin/config/search'] = array(
@@ -327,11 +345,11 @@ function commercebox_admin_dashboard_menu_default_menu_links() {
     'weight' => -49,
     'parent_path' => 'admin/content',
   );
-  // Exported menu link: menu-admin-menu:admin/dash
-  $menu_links['menu-admin-menu:admin/dash'] = array(
+  // Exported menu link: menu-admin-menu:admin/dashboard
+  $menu_links['menu-admin-menu:admin/dashboard'] = array(
     'menu_name' => 'menu-admin-menu',
-    'link_path' => 'admin/dash',
-    'router_path' => 'admin/dash',
+    'link_path' => 'admin/dashboard',
+    'router_path' => 'admin/dashboard',
     'link_title' => 'Dashboard',
     'options' => array(
       'attributes' => array(
@@ -454,7 +472,7 @@ function commercebox_admin_dashboard_menu_default_menu_links() {
     'external' => 0,
     'has_children' => 0,
     'expanded' => 0,
-    'weight' => -41,
+    'weight' => -40,
   );
   // Exported menu link: menu-admin-menu:admin/structure
   $menu_links['menu-admin-menu:admin/structure'] = array(
@@ -755,6 +773,7 @@ function commercebox_admin_dashboard_menu_default_menu_links() {
   t('All product variations');
   t('Apps');
   t('Blocks');
+  t('Catalog filters');
   t('Comments');
   t('Configuration');
   t('Content');

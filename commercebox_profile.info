@@ -132,14 +132,31 @@ dependencies[] = libraries
 
 ; Other
 dependencies[] = taxonomy_menu_block
+dependencies[] = pathauto
+dependencies[] = token
+
+; Search
+dependencies[] = search_api
+dependencies[] = search_api_db
+dependencies[] = search_api_views
+dependencies[] = search_api_facetapi
+dependencies[] = search_api_ranges
+
+; Search toolkit
+dependencies[] = facetapi
+dependencies[] = facetapi_bonus
+dependencies[] = current_search
+
+; Statistics
+dependencies[] = charts
+dependencies[] = commerce_reports
+dependencies[] = views_date_format_sql
 
 ; CB admin menu and dashboard
 dependencies[] = commercebox_admin
 dependencies[] = commercebox_admin_dashboard
 
 files[] = commercebox_profile.profile
-files[] = includes/commercebox_profile.theme.inc
-files[] = includes/commercebox_profile.test_content.inc
 
 ; System Requirements.
 php_memory_limit = 128M

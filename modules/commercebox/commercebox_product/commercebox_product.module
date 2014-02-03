@@ -6,17 +6,6 @@
  */
 function commercebox_product_menu() {
   $items = array();
-
-  // Top level "CommerceBox" container.
-  $items['admin/commercebox'] = array(
-    'title' => 'CommerceBox',
-    'description' => 'Administer your CommerceBox store.',
-    'page callback' => 'system_admin_menu_block_page',
-    'access arguments' => array('access administration pages'),
-    'file path' => drupal_get_path('module', 'system'),
-    'file' => 'system.admin.inc',
-    'weight' => -7,
-  );
   $items['admin/commercebox/product-type'] = array(
     'title' => 'Product types',
     'description' => 'Configure CommerceBox product types.',

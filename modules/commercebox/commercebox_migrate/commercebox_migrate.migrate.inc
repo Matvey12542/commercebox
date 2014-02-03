@@ -257,6 +257,7 @@ class CommerceBoxProductDisplay extends DynamicMigration {
     $this->addFieldMapping('uid', 'uid')->defaultValue(1);
     $this->addFieldMapping('title', 'title');
     $this->addFieldMapping('created', 'created');
+    $this->addFieldMapping('promote', 'promote');
     $this->addFieldMapping('field_catalog_reference', 'category');
     $this->addFieldMapping('field_catalog_reference:create_term')
       ->defaultValue(TRUE);
@@ -280,6 +281,7 @@ class CommerceBoxProductDisplay extends DynamicMigration {
     $columns[3] = array('price', 'price');
     $columns[4] = array('sku', 'sku');
     $columns[5] = array('images', 'images');
+    $columns[6] = array('promote', 'promote');
     return $columns;
   }
 

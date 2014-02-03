@@ -1,20 +1,6 @@
 <?php
 // $Id$
 
-
-/**
- * Implements hook_theme().
- */
-function commercebox_profile_theme() {
-  return array(
-    'commercebox_profile_options_table' => array(
-      'render element' => 'element',
-      'arguments'      => array('variables' => NULL),
-      'file'           => 'includes/commercebox_profile.theme.inc',
-    ),
-  );
-}
-
 /**
  * Implements hook_form_alter().
  *

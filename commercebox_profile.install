@@ -5,9 +5,6 @@
  * Installation code for Commercebox.
  */
 
-// Load inc file with creating functions.
-//require_once DRUPAL_ROOT . '/' . drupal_get_path('profile', 'commercebox_profile') . "/includes/commercebox_profile.additional_operations.inc";
-
 /**
  * Implements hook_install().
  *
@@ -85,7 +82,6 @@ function commercebox_profile_install() {
   variable_set('admin_theme', 'seven');
   variable_set('node_admin_theme', '1');
   variable_set('theme_default', 'commercebox_install');
-  module_enable($enable_modules);
   // Insert default pre-defined node types into the database. For a complete
   // list of available node type attributes, refer to the node type API
   // documentation at: http://api.drupal.org/api/HEAD/function/hook_node_info.
@@ -354,6 +350,33 @@ function commercebox_profile_install() {
 
   // Disable the Advanced Help module nag message until it's production ready.
   variable_set('views_hide_help_message', TRUE);
+
+  // Set default settings for commercebox filters.
+  variable_set('commercebox_filters_settings', array(
+    'field_catalog_reference' => array(
+      'enabled' => 0,
+      'title' => array(
+        'rewrite' => 0,
+        'value' => '',
+      ),
+      'weight' => '0',
+    ),
+    'field_product:commerce_price:amount_decimal' => array(
+      'enabled' => 1,
+      'title' => array(
+        'rewrite' => 1,
+        'value' => 'Price',
+      ),
+      'weight' => '1',
+    ),
+  ));
+
+  // Set default aliases.
+  variable_set('pathauto_node_article_pattern', 'article/[node:title]');
+  variable_set('pathauto_node_page_pattern', 'page/[node:title]');
+  variable_set('pathauto_node_news_pattern', 'news/[node:title]');
+  variable_set('pathauto_node_product_pattern', 'product/[node:title]');
+  variable_set('pathauto_taxonomy_term_pattern', '[term:vocabulary]/[term:name]');
 }
 
 /**
@@ -371,43 +394,6 @@ function commercebox_profile_install_tasks_alter(&$tasks, $install_state) {
     _drupal_maintenance_theme();
   }
 }
-
-
-/**
- * Initialise the batch context.
- */
-//function commercebox_profile_batch_init_context(&$context, &$start, &$end, $items) {
-//  if (!isset($context['sandbox']['progress'])) {
-//    if (!empty($context['sandbox']['op_type']) &&
-//    function_exists("commercebox_profile_{$context['sandbox']['op_type']}_info")) {
-//
-//      $context['sandbox']['info'] = call_user_func("commercebox_profile_{$context['sandbox']['op_type']}_info");
-//    }
-//    $context['sandbox']['progress'] = 0;
-//  }
-//  $start = $context['sandbox']['progress'];
-//  $end = $start + $items;
-//}
-//
-///**
-// * Update the batch context.
-// */
-//function commercebox_profile_batch_update_context(&$context, $end, $total, $msg) {
-//  if ($end > $total) {
-//    $context['finished'] = 1;
-//    return;
-//  }
-//  $context['message'] = "{$msg}: {$end} of {$total}";
-//  $context['sandbox']['progress'] = $end;
-//  $context['finished'] = $end / $total;
-//}
-//
-///**
-// * Run cron to aply rules.
-// */
-//function commercebox_profile_update_7003() {
-//  drupal_cron_run();
-//}
 
 
 /**
@@ -439,6 +425,7 @@ function commercebox_profile_import_content() {
   $batch = array(
     'title' => t('Importing content'),
     'operations' => $operations,
+    'finished' => '_commercebox_profile_finished',
   );
 
   return $batch;
@@ -450,6 +437,18 @@ function commercebox_profile_import_content() {
  */
 function _commercebox_profile_import($operation, $type, &$context) {
   $context['message'] = t('@operation', array('@operation' => $type));
-  $migration =  Migration::getInstance($operation);
+  $migration = Migration::getInstance($operation);
   $migration->processImport();
+}
+
+
+/**
+ * Implements hook_profile_finished().
+ */
+function _commercebox_profile_finished($success, $results, $operations) {
+  if ($success) {
+    // Enable commerce_search_api to automatically create Search API db server,
+    // generated search index and facets.
+    module_enable(array('commerce_search_api'));
+  }
 }

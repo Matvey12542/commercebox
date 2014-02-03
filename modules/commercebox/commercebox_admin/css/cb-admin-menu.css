@@ -62,7 +62,7 @@ body #page {
 #commercebox-menu li a.active {
   background: #8f9197;
 }
-#commercebox-menu li.expanded a.active{
+#commercebox-menu li.expanded > a.active{
   background: #8f9197 url(../img/more.png) 96% no-repeat;
 }
 #commercebox-menu li.expanded > a{
@@ -87,15 +87,18 @@ body #page {
   color: #8f9197;
   text-decoration: none;
 }
-body.page-admin  {
+body.page-admin,
+body.page-batch  {
   padding: 20px 20px 20px 0;
   background: #333;
 }
-.page-admin #page {
+.page-admin #page,
+body.page-batch #page {
   padding: 20px;
   background: url(../img/bg.jpg);
 }
-.page-admin #page #branding {
+body.page-admin #page #branding,
+body.page-batch #page #branding {
   background: url(../img/bg.jpg);
 }
 #dash-pane-links #dash-links {
@@ -120,6 +123,15 @@ body.page-admin  {
 }
 #dash-pane-links #dash-links #dash-link-products a.dash-link-title {
   background: url(../img/products.png) no-repeat;
+  display: inline-block;
+  padding-top: 85px;
+  width: 100%;
+  text-transform: uppercase;
+  color: #33b5e9;
+  font-size: 14px;
+}
+#dash-pane-links #dash-links #dash-link-statistics a.dash-link-title {
+  background: url(../img/statistics.png) no-repeat;
   display: inline-block;
   padding-top: 85px;
   width: 100%;

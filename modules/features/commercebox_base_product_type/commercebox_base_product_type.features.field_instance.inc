@@ -36,10 +36,13 @@ function commercebox_base_product_type_field_default_field_instances() {
         'weight' => 0,
       ),
       'compare_page' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
+        'label' => 'hidden',
+        'module' => 'commerce_price',
+        'settings' => array(
+          'calculation' => 'calculated_sell_price',
+        ),
+        'type' => 'commerce_price_formatted_amount',
+        'weight' => 4,
       ),
       'default' => array(
         'label' => 'hidden',
@@ -111,6 +114,12 @@ function commercebox_base_product_type_field_default_field_instances() {
     'deleted' => 0,
     'description' => '',
     'display' => array(
+      'compare_page' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
       'default' => array(
         'label' => 'hidden',
         'module' => 'text',
@@ -157,24 +166,23 @@ function commercebox_base_product_type_field_default_field_instances() {
     'description' => '',
     'display' => array(
       'compare_page' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
+        'label' => 'hidden',
+        'module' => 'image',
+        'settings' => array(
+          'image_link' => '',
+          'image_style' => '450x460_retina',
+        ),
+        'type' => 'image',
+        'weight' => 7,
       ),
       'default' => array(
         'label' => 'hidden',
-        'module' => 'galleryformatter',
+        'module' => 'image',
         'settings' => array(
-          'link_to_full' => 1,
-          'link_to_full_style' => 'large',
-          'linking_method' => 'onclick_full',
-          'modal' => 'none',
-          'slide_style' => '450x460_retina',
-          'style' => 'nostyle',
-          'thumb_style' => 'thumbnail',
+          'preview_image_style' => '450x460_retina',
+          'progress_indicator' => 'throbber',
         ),
-        'type' => 'galleryformatter_default',
+        'type' => 'image_image',
         'weight' => 7,
       ),
       'line_item' => array(
@@ -239,7 +247,7 @@ function commercebox_base_product_type_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_catalog_reference',
-    'label' => 'Term reference',
+    'label' => 'Catalog categories',
     'product_catalog' => 1,
     'required' => 0,
     'settings' => array(
@@ -324,11 +332,11 @@ function commercebox_base_product_type_field_default_field_instances() {
 
   // Translatables
   // Included for use with string extractors like potx.
+  t('Catalog categories');
   t('Description');
   t('Images');
   t('Price');
   t('Product variations');
-  t('Term reference');
 
   return $field_instances;
 }

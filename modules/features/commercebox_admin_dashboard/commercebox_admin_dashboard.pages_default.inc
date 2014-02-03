@@ -15,7 +15,7 @@ function commercebox_admin_dashboard_default_page_manager_pages() {
   $page->task = 'page';
   $page->admin_title = 'Administration front page';
   $page->admin_description = '';
-  $page->path = 'admin/dash';
+  $page->path = 'admin/dashboard';
   $page->access = array(
     'plugins' => array(
       0 => array(
@@ -90,6 +90,11 @@ function commercebox_admin_dashboard_default_page_manager_pages() {
   <a href="?q=admin/commerce/products" class="dash-link-title">Products</a>
   <a href="?q=admin/commerce/products/add/product">Add product</a>
   </div>
+<div id="dash-link-statistics">
+  <a href="?q=admin/commerce/reports" class="dash-link-title">CHECK</a>
+  <a href="?q=admin/commerce/reports">Statistics</a>
+  </div>
+
 </div>
 ',
       'format' => 'full_html',

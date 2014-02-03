@@ -1,7 +1,7 @@
 <?php
 
-define('COMMERCEBOX_THEMES_SERVER', 1);
-define('COMMERCEBOX_MODULES_SERVER', 2);
+define('COMMERCEBOX_THEMES_SERVER', 9);
+define('COMMERCEBOX_MODULES_SERVER', 10);
 
 /**
  * Implements hook_apps_servers_info().
@@ -29,9 +29,14 @@ function commercebox_apps_apps_servers_info() {
 function commercebox_apps_menu_alter(&$items) {
   $items['admin/apps']['page callback'] = 'drupal_get_form';
   $items['admin/apps']['page arguments'] = array('commercebox_apps_apps_form');
+  $servers = apps_servers();
+  $APPSERVER_BASEPATH = APPSERVER_BASEPATH;
+  foreach ($servers as $server) {
+    $items["$APPSERVER_BASEPATH/{$server['name']}/app/%/install"]['page callback'] = 'commercebox_apps_theme_install';
+  }
 }
 
-// Take app from server.
+// Take app from server.      
 function commercebox_apps_manifest($server) {
   $manifests = &drupal_static(__FUNCTION__);
   require_once DRUPAL_ROOT . '/includes/install.inc';
@@ -222,12 +227,12 @@ function commercebox_apps_app_install($values_apps) {
   foreach ($apps_dis_theme['apps'] as $app_theme_dis) {
     if (($app_theme_dis['machine_name'] != $values_apps['cb_apps']) &&
       !empty($app_theme_dis['enabled'])) {
-
       $app_ar_dis[] = $app_theme_dis['machine_name'];
     }
   }
   $servers = commercebox_apps_apps_servers_info();
   $values_apps['cb_apps'] = array($values_apps['cb_apps'] => $values_apps['cb_apps']);
+  
   foreach ($servers as $key => $server_name) {
     $server_name['name'] = $key;
     $app_full = commercebox_apps_manifest($server_name);
@@ -246,6 +251,7 @@ function commercebox_apps_app_install($values_apps) {
       }
     }
   }
+
   if (!empty($app_ar_dis)) {
     module_disable($app_ar_dis, FALSE);
   }
@@ -258,7 +264,6 @@ function commercebox_apps_app_install($values_apps) {
 }
 
 /**
- * Make the batch for downloading modules for app.
  *
  * Split out for use in apps.profile.inc
  */
@@ -321,8 +326,10 @@ function commercebox_apps_download_apps_batch($apps) {
     'operations' => $download_commands,
     'title' => t('Downloading modules'),
     'init_message' => t('Preparing to download needed modules'),
+    'finished' => 'commercebox_batch_finished',
   );
   batch_set($batch);
+  batch_process();
 }
 
 /*
@@ -332,7 +339,7 @@ function commercebox_apps_download_apps_batch($apps) {
  */
 function commercebox_apps_apply_batch($project, $url, $type, &$context) {
   module_load_include("inc", "update", "update.manager");
-
+   
   // This is here to show the user that we are in the process of downloading.
   if (!isset($context['sandbox']['started'])) {
     $context['sandbox']['started'] = TRUE;
@@ -490,7 +497,8 @@ function commercebox_apps_banner_view($element) {
   $name = l($element['name'], $link);
   $element['teaser'] = TRUE;
   $rating = theme('apps_voting_widget', $element);
-  if($element['screenshots'][0]) {
+  $screenshot = NULL;
+  if(isset($element['screenshots'][0])) {
     $element['screenshots'][0]['style_name'] = 'apps_featured_screenshot';
     $screenshot = theme('image_style', $element['screenshots'][0]);
   }
@@ -592,5 +600,32 @@ function commercebox_apps_preprocess_view_app_teaser($vars) {
       <div class="app-action">' . $action . '</div>
     </div>';
     return $return;
+  }
+}
+
+/**
+ * Callback for theme install.
+ */
+function commercebox_apps_theme_install($server_name, $app_name) {
+  if (!commercebox_apps_installer_has_write_access()) {
+    drupal_set_message(t('You do not have sufficient permissions to install by webserver direct install. <br/><br/><strong>sudo chmod -R 777 sites/all</strong>'));
+    drupal_goto("admin/apps/{$server_name}/app/{$app_name}");
+  }
+  else {  
+  $theme = array(
+    'cb_apps' => $app_name,
+    'cb_mod' => array(),
+  );
+  commercebox_apps_app_install($theme);
+  }
+  return '';
+}
+
+/**
+ * Redirect to apps page install. 
+ */
+function commercebox_batch_finished($success, $results, $operations) {
+  if ($success) {
+    drupal_goto('admin/apps');
   }
 }

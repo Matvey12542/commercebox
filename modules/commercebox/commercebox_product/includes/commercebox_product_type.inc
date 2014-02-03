@@ -27,6 +27,7 @@ function commercebox_product_type_form($form, &$form_state, $type) {
   $product_type = $form_state['product_type'];
 
   $form_state['instances'] = array();
+  $form_state['registry_rebuild'] = FALSE;
   $catalog_access = TRUE;
   if (!empty($product_type['type'])) {
     $form_state['instances'] = field_info_instances('commerce_product', $product_type['type']);
@@ -71,8 +72,10 @@ function commercebox_product_type_form($form, &$form_state, $type) {
     '#default_value' => array_keys(array_intersect_key($form_state['instances'], $options)),
   );
 
-  array_push($form['actions']['submit']['#submit'], 'commercebox_product_create_basic_fields_submit', 'commercebox_product_product_type_form_submit');
-  array_push($form['actions']['save_continue']['#submit'], 'commercebox_product_create_basic_fields_submit', 'commercebox_product_product_type_form_submit');
+  $form['actions']['submit']['#submit'][] = 'commercebox_product_create_basic_fields_submit';
+  $form['actions']['submit']['#submit'][] = 'commercebox_product_product_type_form_submit';
+  $form['actions']['save_continue']['#submit'][] = 'commercebox_product_create_basic_fields_submit';
+  $form['actions']['save_continue']['#submit'][] = 'commercebox_product_product_type_form_submit';
 
   $form['create_product_display']['#type'] = 'value';
   return $form;
@@ -84,10 +87,10 @@ function commercebox_product_type_form($form, &$form_state, $type) {
  *
  * Create catalog vocabulary reference field in the product display node.
  */
-function commercebox_product_create_basic_fields_submit($form, $form_state) {
+function commercebox_product_create_basic_fields_submit($form, &$form_state) {
   $bundle = _get_bundle_name($form_state);
   if ($form_state['values']['product_type']['catalog']) {
-    _create_product_cb_fields(array('field_catalog_reference' => TRUE), $bundle, 'node');
+    _create_product_cb_fields(array('field_catalog_reference' => TRUE), $bundle, 'node', $form_state);
   }
   else {
     $instance = field_info_instance('node', 'field_catalog_reference', $bundle);
@@ -95,7 +98,7 @@ function commercebox_product_create_basic_fields_submit($form, $form_state) {
   }
   // Create default fields for commerce product display.
   $fields = array('field_images' => TRUE, 'field_description' => TRUE);
-  _create_product_cb_fields($fields, $bundle, 'commerce_product');
+  _create_product_cb_fields($fields, $bundle, 'commerce_product', $form_state);
 
   // We need to update default display setting of newly created product display
   // node type, using settings defined in the base product display node type.
@@ -121,7 +124,7 @@ function commercebox_product_create_basic_fields_submit($form, $form_state) {
 /**
  * Submit handler for commercebox_add_product_type_form().
  */
-function commercebox_product_product_type_form_submit($form, $form_state) {
+function commercebox_product_product_type_form_submit($form, &$form_state) {
   field_cache_clear();
   field_associate_fields('commercebox_product');
 
@@ -129,20 +132,32 @@ function commercebox_product_product_type_form_submit($form, $form_state) {
   $fields = array_filter(array_merge($form_state['values']['information']['fields'], $form_state['values']['attribute']['fields']));
 
   if (empty($form_state['instances'])) {
-    _create_product_cb_fields($fields, $type, 'commerce_product');
+    _create_product_cb_fields($fields, $type, 'commerce_product', $form_state);
   }
   else {
     // Filter instances to process only fields with cb_ prefix.
     $instances = array_filter($form_state['instances'], '_filter_instances');
     $enabled = array_diff_key($fields, $instances);
     if (!empty($enabled)) {
-      _create_product_cb_fields($enabled, $type, 'commerce_product');
+      _create_product_cb_fields($enabled, $type, 'commerce_product', $form_state);
     }
     $disabled = array_diff_key($instances, $fields);
     if (!empty($disabled)) {
       _delete_product_cb_fields($disabled);
+      $form_state['registry_rebuild'] = TRUE;
     }
   }
+
+  // Rebuild registry only if some field was added or deleted.
+  if ($form_state['registry_rebuild']) {
+    module_load_include('inc', 'admin_menu', 'admin_menu');
+    _admin_menu_flush_cache('registry');
+
+    $message = t('You need to update your !index to apply new changes in the product fields configuration.', array('!index' => l(t('Product display index'), 'admin/config/search/search_api/index/product_display')));
+    drupal_set_message($message, 'warning');
+  }
+
+  $form_state['redirect'] = current_path();
 }
 
 
@@ -151,7 +166,7 @@ function commercebox_product_product_type_form_submit($form, $form_state) {
  *
  * @todo: Rewrite to use $fields array values instead of keys.
  */
-function _create_product_cb_fields($fields, $bundle, $entity_type) {
+function _create_product_cb_fields($fields, $bundle, $entity_type, &$form_state) {
   $base_product_instances = array();
   if (module_load_include('inc', 'commercebox_base_product_type', 'commercebox_base_product_type.features.field_instance')) {
     $base_product_instances = commercebox_base_product_type_field_default_field_instances();
@@ -178,9 +193,11 @@ function _create_product_cb_fields($fields, $bundle, $entity_type) {
           $instance = $base_product_instances["{$entity_type}-product-{$name}"];
           $instance['bundle'] = $bundle;
           field_create_instance($instance);
+          $form_state['registry_rebuild'] = TRUE;
         }
         else {
           field_create_instance($field_instances[$name]);
+          $form_state['registry_rebuild'] = TRUE;
         }
       }
     }
