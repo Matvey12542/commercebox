@@ -4,5 +4,6 @@ package = Base
 dependencies[] = image
 features[features_api][] = api:2
 features[image][] = 450x460_retina
+features[image][] = commercebox_slider
 features[image][] = s_590
 features[image][] = x_350
