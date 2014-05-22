@@ -94,6 +94,10 @@ projects[nodequeue][version] = 2.0-beta1
 projects[nodequeue][subdir] = "contrib"
 projects[link][version] = 1.2
 projects[link][subdir] = "contrib"
+projects[menu_minipanels][version] = 1.1
+projects[menu_minipanels][subdir] = "contrib"
+
+
 
 
 
