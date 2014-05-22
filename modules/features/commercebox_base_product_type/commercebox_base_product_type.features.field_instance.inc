@@ -10,6 +10,52 @@
 function commercebox_base_product_type_field_default_field_instances() {
   $field_instances = array();
 
+  // Exported field_instance: 'commerce_product-product-cb_features'
+  $field_instances['commerce_product-product-cb_features'] = array(
+    'bundle' => 'product',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 1,
+      ),
+      'line_item' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'node_teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'commerce_product',
+    'field_name' => 'cb_features',
+    'label' => 'Features',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 1,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'rows' => 5,
+      ),
+      'type' => 'text_textarea',
+      'weight' => 12,
+    ),
+  );
+
   // Exported field_instance: 'commerce_product-product-commerce_price'
   $field_instances['commerce_product-product-commerce_price'] = array(
     'bundle' => 'product',
@@ -177,12 +223,17 @@ function commercebox_base_product_type_field_default_field_instances() {
       ),
       'default' => array(
         'label' => 'hidden',
-        'module' => 'image',
+        'module' => 'galleryformatter',
         'settings' => array(
-          'preview_image_style' => '450x460_retina',
-          'progress_indicator' => 'throbber',
+          'link_to_full' => 1,
+          'link_to_full_style' => 0,
+          'linking_method' => 'show_full_link',
+          'modal' => 'none',
+          'slide_style' => 'galleryformatter_slide',
+          'style' => 'Greenarrows',
+          'thumb_style' => 'galleryformatter_thumb',
         ),
-        'type' => 'image_image',
+        'type' => 'galleryformatter_default',
         'weight' => 7,
       ),
       'line_item' => array(
@@ -236,7 +287,20 @@ function commercebox_base_product_type_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 6,
+        'weight' => 7,
+      ),
+      'information_product' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 11,
+      ),
+      'reviews_product' => array(
+        'label' => 'inline',
+        'module' => 'taxonomy',
+        'settings' => array(),
+        'type' => 'taxonomy_term_reference_link',
+        'weight' => 4,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -279,7 +343,7 @@ function commercebox_base_product_type_field_default_field_instances() {
           'show_single_product_attributes' => 0,
         ),
         'type' => 'commerce_cart_add_to_cart_form',
-        'weight' => -7,
+        'weight' => 3,
       ),
       'full' => array(
         'label' => 'hidden',
@@ -293,6 +357,25 @@ function commercebox_base_product_type_field_default_field_instances() {
         ),
         'type' => 'commerce_cart_add_to_cart_form',
         'weight' => 5,
+      ),
+      'information_product' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 10,
+      ),
+      'reviews_product' => array(
+        'label' => 'hidden',
+        'module' => 'commerce_cart',
+        'settings' => array(
+          'combine' => TRUE,
+          'default_quantity' => 1,
+          'line_item_type' => 'product',
+          'show_quantity' => FALSE,
+          'show_single_product_attributes' => FALSE,
+        ),
+        'type' => 'commerce_cart_add_to_cart_form',
+        'weight' => 3,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -334,6 +417,7 @@ function commercebox_base_product_type_field_default_field_instances() {
   // Included for use with string extractors like potx.
   t('Catalog categories');
   t('Description');
+  t('Features');
   t('Images');
   t('Price');
   t('Product variations');

@@ -10,7 +10,7 @@
 function commercebox_admin_dashboard_views_default_views() {
   $export = array();
 
-  $view = new view();
+  $view = new view;
   $view->name = 'last_added_comments';
   $view->description = '';
   $view->tag = 'default';
@@ -23,7 +23,6 @@ function commercebox_admin_dashboard_views_default_views() {
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
   $handler->display->display_options['title'] = 'Last added comments';
-  $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['access']['type'] = 'perm';
   $handler->display->display_options['cache']['type'] = 'none';
   $handler->display->display_options['query']['type'] = 'views_query';
@@ -107,6 +106,7 @@ function commercebox_admin_dashboard_views_default_views() {
   $handler->display->display_options['footer']['area']['id'] = 'area';
   $handler->display->display_options['footer']['area']['table'] = 'views';
   $handler->display->display_options['footer']['area']['field'] = 'area';
+  $handler->display->display_options['footer']['area']['empty'] = FALSE;
   $handler->display->display_options['footer']['area']['content'] = '<div><a href="?q=admin/content/comment">View all</a></div>';
   $handler->display->display_options['footer']['area']['format'] = 'full_html';
   /* No results behavior: Global: Text area */
@@ -234,7 +234,7 @@ function commercebox_admin_dashboard_views_default_views() {
   );
   $export['last_added_comments'] = $view;
 
-  $view = new view();
+  $view = new view;
   $view->name = 'last_added_products';
   $view->description = '';
   $view->tag = 'default';
@@ -247,7 +247,6 @@ function commercebox_admin_dashboard_views_default_views() {
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
   $handler->display->display_options['title'] = 'Last added products';
-  $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['access']['type'] = 'none';
   $handler->display->display_options['cache']['type'] = 'none';
   $handler->display->display_options['query']['type'] = 'views_query';
@@ -329,6 +328,7 @@ function commercebox_admin_dashboard_views_default_views() {
   $handler->display->display_options['footer']['area']['id'] = 'area';
   $handler->display->display_options['footer']['area']['table'] = 'views';
   $handler->display->display_options['footer']['area']['field'] = 'area';
+  $handler->display->display_options['footer']['area']['empty'] = FALSE;
   $handler->display->display_options['footer']['area']['content'] = '<div><a href="?q=admin/commerce/products">View all</a></div>';
   $handler->display->display_options['footer']['area']['format'] = 'full_html';
   /* No results behavior: Global: Text area */
@@ -442,12 +442,13 @@ function commercebox_admin_dashboard_views_default_views() {
     t('Price'),
     t('Operations'),
     t('Edit link'),
+    t('node/[nid]'),
     t('View'),
     t('view'),
   );
   $export['last_added_products'] = $view;
 
-  $view = new view();
+  $view = new view;
   $view->name = 'short_statistics';
   $view->description = '';
   $view->tag = 'default';
@@ -460,7 +461,6 @@ function commercebox_admin_dashboard_views_default_views() {
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
   $handler->display->display_options['title'] = 'Last added users';
-  $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['access']['type'] = 'perm';
   $handler->display->display_options['access']['perm'] = 'access user profiles';
   $handler->display->display_options['cache']['type'] = 'none';
@@ -530,6 +530,7 @@ function commercebox_admin_dashboard_views_default_views() {
   $handler->display->display_options['footer']['area']['id'] = 'area';
   $handler->display->display_options['footer']['area']['table'] = 'views';
   $handler->display->display_options['footer']['area']['field'] = 'area';
+  $handler->display->display_options['footer']['area']['empty'] = FALSE;
   $handler->display->display_options['footer']['area']['content'] = '<div><a href="?q=admin/people">View all</a></div>';
   $handler->display->display_options['footer']['area']['format'] = 'full_html';
   /* Field: User: Name */
@@ -544,11 +545,6 @@ function commercebox_admin_dashboard_views_default_views() {
   $handler->display->display_options['fields']['mail']['table'] = 'users';
   $handler->display->display_options['fields']['mail']['field'] = 'mail';
   $handler->display->display_options['fields']['mail']['link_to_user'] = '0';
-  /* Field: User: Roles */
-  $handler->display->display_options['fields']['rid']['id'] = 'rid';
-  $handler->display->display_options['fields']['rid']['table'] = 'users_roles';
-  $handler->display->display_options['fields']['rid']['field'] = 'rid';
-  $handler->display->display_options['fields']['rid']['empty'] = 'authenticated user';
   /* Field: User: Created date */
   $handler->display->display_options['fields']['created']['id'] = 'created';
   $handler->display->display_options['fields']['created']['table'] = 'users';
@@ -597,8 +593,6 @@ function commercebox_admin_dashboard_views_default_views() {
     t('<div><a href="?q=admin/people">View all</a></div>'),
     t('Username'),
     t('E-mail'),
-    t('Roles'),
-    t('authenticated user'),
     t('Member for'),
     t('Last access'),
     t('never'),
@@ -607,7 +601,7 @@ function commercebox_admin_dashboard_views_default_views() {
   );
   $export['short_statistics'] = $view;
 
-  $view = new view();
+  $view = new view;
   $view->name = 'top_products';
   $view->description = '';
   $view->tag = 'default';
@@ -620,7 +614,6 @@ function commercebox_admin_dashboard_views_default_views() {
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
   $handler->display->display_options['title'] = 'Top products';
-  $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['group_by'] = TRUE;
   $handler->display->display_options['access']['type'] = 'none';
   $handler->display->display_options['cache']['type'] = 'none';
@@ -739,16 +732,6 @@ function commercebox_admin_dashboard_views_default_views() {
   $handler->display->display_options['fields']['created']['relationship'] = 'field_product';
   $handler->display->display_options['fields']['created']['label'] = 'Created date';
   $handler->display->display_options['fields']['created']['date_format'] = 'short';
-  /* Field: Commerce Product: Price */
-  $handler->display->display_options['fields']['commerce_price']['id'] = 'commerce_price';
-  $handler->display->display_options['fields']['commerce_price']['table'] = 'field_data_commerce_price';
-  $handler->display->display_options['fields']['commerce_price']['field'] = 'commerce_price';
-  $handler->display->display_options['fields']['commerce_price']['relationship'] = 'commerce_product_product_id';
-  $handler->display->display_options['fields']['commerce_price']['click_sort_column'] = 'amount';
-  $handler->display->display_options['fields']['commerce_price']['settings'] = array(
-    'calculation' => 'calculated_sell_price',
-  );
-  $handler->display->display_options['fields']['commerce_price']['group_column'] = 'entity_id';
   /* Field: Commerce Product: Delete link */
   $handler->display->display_options['fields']['delete_product']['id'] = 'delete_product';
   $handler->display->display_options['fields']['delete_product']['table'] = 'commerce_product';
@@ -794,7 +777,6 @@ function commercebox_admin_dashboard_views_default_views() {
     t('Product title'),
     t('Catalog'),
     t('Created date'),
-    t('Price'),
     t('Product operations'),
     t('Edit link'),
     t('Title'),

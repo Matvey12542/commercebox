@@ -1,0 +1,123 @@
+<?php
+
+/**
+ * @file
+ * Enables the UI Elements system.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function ui_elements_menu() {
+  $items['admin/ui-elements'] = array(
+    'title' => 'UI Elements',
+    'description' => 'UI Elements settings.',
+    'access arguments' => array('administer permissions'),
+    'weight' => 2.33,
+    'type' => MENU_NORMAL_ITEM,
+    'menu_name' => 'menu-admin-menu',
+  );
+  $items['admin/ui-elements/background'] = array(
+    'title' => 'Background',
+    'description' => 'UI Elements settings background.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ui_elements_bg_form'),
+    'access arguments' => array('administer permissions'),
+    'file' => 'ui_elements.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+    'menu_name' => 'menu-admin-menu',
+  );
+  $items['admin/ui-elements/button'] = array(
+    'title' => 'Buttons',
+    'description' => 'UI Elements settings button.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ui_elements_button_form'),
+    'access arguments' => array('administer permissions'),
+    'file' => 'ui_elements.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+    'menu_name' => 'menu-admin-menu',
+  );
+  $items['admin/ui-elements/page-style'] = array(
+    'title' => 'Page style',
+    'description' => 'UI Elements settings page style.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ui_elements_page_style_form'),
+    'access arguments' => array('administer permissions'),
+    'file' => 'ui_elements.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+    'menu_name' => 'menu-admin-menu',
+  );
+  // For payment settings
+  $items['admin/ui-elements/payment_settings'] = array(
+    'title' => 'Payment settings',
+    'page callback' => 'commercebox_payment_settings_callback',
+    'access arguments' => array('Administer payment methods'),
+    'file' => 'payment_settings.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+    'menu_name' => 'menu-admin-menu',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_init().
+ */
+function ui_elements_init() {
+  drupal_add_js(drupal_get_path('module', 'ui_elements') . '/js/ui_elements.js', 'file');
+  drupal_add_css(drupal_get_path('module', 'ui_elements') . '/css/ui_elements.css', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
+
+  $bg_color = variable_get('ui_settings_bg_color', '#FFFFFF');
+  $fid = variable_get('ui_settings_bg_image_fid');
+  if (!empty($fid)) {
+    $file = file_load(variable_get('ui_settings_bg_image_fid'));
+    $path = file_create_url($file->uri);
+  }
+  $bg_image = !isset($path) ? ' ' : " url($path) ";
+  $bg_repeat = variable_get('ui_settings_bg_repeat', 'repeat');
+  if ($bg_repeat == 'auto') {
+    $bg_style = '';
+  }
+  else {
+    $bg_style = $bg_color . $bg_image . $bg_repeat;
+  }
+  $bg_style = 'body.html { background: ' . $bg_style . ';}';
+
+  $page_style_color = variable_get('ui_settings_page_style_color');
+  $page_style_color = '
+  body .galleryformatter:hover .slide-button,
+  body .pane-commercebox-slideshow .views-slideshow-controls-bottom span a {
+    background-color:' . $page_style_color . ';
+  }
+  body .pane-commercebox-slideshow .views-slideshow-pager-field-item.active .views-content-counter,
+  body .pane-commercebox-slideshow .views-slideshow-pager-field-item .views-content-counter {
+    background-color:' . $page_style_color . ';
+  }
+  body .section-header #zone-user-wrapper,
+  body .commerce-item-product .commerce-product-field-commerce-price .field-item,
+  body .commercebox-catalog-content .views-field-commerce-price,
+  body .view-catalog-node-index .views-field-commerce-price {
+    background: ' . $page_style_color . ';
+  }
+  body .pane-system-main-menu,
+  body .featured-items h2 {
+    border-color: ' . $page_style_color . ';
+  }
+  body #zone-footer {
+    border-color: ' . $page_style_color . ';
+  }';
+  $button_color = "input.form-submit { background: " . variable_get('ui_settings_button_color') . "!important; border-radius:" . variable_get('ui_settings_button_rounded') . "px !important;}";
+  $pager_style = "ul.pager li { background: " . variable_get('ui_settings_pager_style', 'none  !important') . ";}";
+  $css = $button_color;
+  $css .= $pager_style[0];
+  $css .= $page_style_color;
+  $css .= $bg_style;  
+
+  if (sizeof(module_implements('ui_elements_change_old_theme_style_css')) > 0) {
+    $cssmas = module_invoke_all('ui_elements_change_old_theme_style_css');
+    foreach ($cssmas as $css) {
+      $css .= $css;
+    }
+  }
+  drupal_add_css($css, 'inline');
+}

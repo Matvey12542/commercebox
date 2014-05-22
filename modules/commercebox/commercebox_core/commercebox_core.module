@@ -1,0 +1,69 @@
+<?php
+/**
+ * @file
+ * CommerceBOX module.
+ */
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ *
+ * It simply tells panels where to look for the .inc file that
+ * defines various args, contexts and content_types.
+ */
+function commercebox_core_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'ctools' && !empty($plugin)) {
+    return "plugins/$plugin";
+  }
+}
+
+
+/**
+ * Implements hook_menu().
+ */
+function commercebox_core_menu() {
+  $items['admin/config/development/feature-injection'] = array(
+    'title' => 'Feature-injection settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('commercebox_feature_injection_form'),
+    'access arguments' => array('access administration pages'),
+    'description' => 'Enable or disable feature-injection settings.',
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'includes/commercebox.admin.inc'
+  );
+
+  // Top level "CommerceBox" container.
+  $items['admin/commercebox'] = array(
+    'title' => 'CommerceBox',
+    'description' => 'CommerceBox configuration',
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('access site reports'),
+    'weight' => -7,
+    'position' => 'left',
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+  $items['admin/commercebox/filters'] = array(
+    'title' => 'Filters settings',
+    'description' => 'Configure CommerceBox catalog filters.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('commercebox_filters_settings_form'),
+    'access arguments' => array('access administration pages'),
+    'weight' => -60,
+    'file' => 'includes/commercebox.admin.inc',
+  );
+
+  return $items;
+}
+
+
+/**
+ * Implements hook_theme().
+ */
+function commercebox_core_theme() {
+  return array(
+    'commercebox_filters_settings_form' => array(
+      'render element' => 'form',
+      'file' => 'includes/commercebox.theme.inc',
+    ),
+  );
+}

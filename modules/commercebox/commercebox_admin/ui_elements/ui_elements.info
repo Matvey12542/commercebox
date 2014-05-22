@@ -1,0 +1,5 @@
+name = UI elements
+description = Styling the basic theme.
+package = Commercebox
+version = VERSION
+core = 7.x

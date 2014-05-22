@@ -2,19 +2,15 @@
 core = 7.x
 api = 2
 
-projects[drupal][type] = core
-
 ; Basic contributed modules.
 projects[addressfield][version] = 1.0-beta4
 projects[addressfield][subdir] = "contrib"
 projects[admin_menu][version] = 3.0-rc4
 projects[admin_menu][subdir] = "contrib"
 projects[apps][version] = 1.0-beta7
-projects[apps][subdir] = "contrib"
-
+projects[apps][subdir] = "modified"
 projects[apps][patch][] = "http://drupal.org/files/apps-add_themes_installation-1730160-18.patch"
 projects[apps][patch][] = "http://drupal.org/files/apps-fix_illegal_string_offset-1820266-9.patch"
-
 projects[commerce][version] = 1.8
 projects[commerce][subdir] = "contrib"
 projects[commerce_backoffice][version] = 1.3
@@ -23,12 +19,8 @@ projects[commerce_fancy_attributes][version] = 1.0
 projects[commerce_fancy_attributes][subdir] = "contrib"
 projects[commerce_features][version] = 1.0-rc1
 projects[commerce_features][subdir] = "contrib"
-
-;! cgenge version
 projects[commerce_migrate][version] = 1.1
-;!!!!!!!
 projects[commerce_migrate][subdir] = "contrib"
-
 projects[ctools][version] = 1.3
 projects[ctools][subdir] = "contrib"
 projects[date][version] = 2.6
@@ -65,17 +57,48 @@ projects[taxonomy_menu_block][version] = 1.2
 projects[taxonomy_menu_block][subdir] = "contrib"
 projects[views][version] = 3.1
 projects[views][subdir] = "contrib"
-
 projects[views_bulk_operations][version] = 3.1
 projects[views_bulk_operations][subdir] = "contrib"
-
 projects[views_megarow][version] = 1.1
 projects[views_megarow][subdir] = "contrib"
-
 projects[taxonomy_menu_block][version] = 1.2
 projects[taxonomy_menu_block][subdir] = "contrib"
-
 projects[wysiwyg][version] = 2.2
 projects[wysiwyg][subdir] = "contrib"
+projects[search_api][version] = 1.10
+projects[search_api][subdir] = "contrib"
+projects[search_api_db][version] = 1.1
+projects[search_api_db][subdir] = "contrib"
+projects[search_api_ranges][version] = 1.x-dev
+projects[search_api_ranges][subdir] = "modified"
+projects[commerce_search_api][version] = 1.3
+projects[commerce_search_api][subdir] = "contrib"
+projects[facetapi][version] = 1.3
+projects[facetapi][subdir] = "contrib"
+projects[charts][version] = 2.0-beta5
+projects[charts][subdir] = "contrib"
+projects[commerce_reports][version] = 4.0-alpha1
+projects[commerce_reports][subdir] = "contrib"
+projects[facetapi_bonus][version] = 1.1
+projects[facetapi_bonus][subdir] = "contrib"
+projects[pathauto][version] = 1.2
+projects[pathauto][subdir] = "contrib"
+projects[token][version] = 1.5
+projects[token][subdir] = "contrib"
+projects[views_date_format_sql][version] = 3.1
+projects[views_date_format_sql][subdir] = "contrib"
+
+projects[features_extra][version] = 7.x-1.0-beta1
+projects[features_extra][subdir] = "contrib"
+projects[nodequeue][version] = 7.x-2.0-beta1
+projects[nodequeue][subdir] = "contrib"
+projects[views_ui][version] = 7.x-3.1
+projects[views][subdir] = "contrib"
 
 
+
+
+; Libraries.
+libraries[colorpicker][download][type] = get
+libraries[colorpicker][download][url] = "http://www.eyecon.ro/colorpicker/colorpicker.zip"
+libraries[colorpicker][destination] = libraries

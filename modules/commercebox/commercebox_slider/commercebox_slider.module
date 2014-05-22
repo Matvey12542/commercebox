@@ -1,0 +1,299 @@
+<?php
+/**
+ * @file
+ * Commercebox slider.
+ */
+
+/**
+ * Implements hook_init().
+ */
+function commercebox_slider_init() {
+  drupal_add_css(drupal_get_path('module', 'commercebox_slider') . '/css/css_commercebox_slider.css', array(
+      'group' => CSS_DEFAULT,
+    ));
+  drupal_add_js(drupal_get_path('module', 'commercebox_slider') . '/js/main.js', array(
+      'group' => CSS_DEFAULT,
+    ));
+  drupal_add_library('system', 'ui.sortable');
+//  if (($_GET['q'] == 'system/ajax' || strstr($_GET['q'], 'file/ajax/')) && preg_match('/^[a-z_]+_node_form/', $_POST['form_id'])) {
+//    module_load_include('inc', 'node', 'node.pages');
+//  }
+}
+
+/**
+ * Implements hook_node_insert().
+ */
+function commercebox_slider_node_insert($node) {
+  // Add node into nodequeue.
+  if ($node->status === 1 && $node->type === 'banner') {
+    $queue = nodequeue_load_queue_by_name('commercebox_slider');
+    $subqueue = nodequeue_load_subqueue($queue->qid);
+    nodequeue_subqueue_add($queue, $subqueue, $node->nid);
+  }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function commercebox_slider_menu() {
+  $items = array();
+  $items['data/%'] = array(
+    'title' => 'Commercebox slider',
+    'page callback' => 'commercebox_slider_data_ajax_callback',
+    'page arguments' => array(1),
+    'delivery callback' => 'ajax_deliver',
+    'access arguments' => array('access content'),
+  );
+  $items['data/delete/%'] = array(
+    'title' => 'Commercebox slider',
+    'page callback' => 'commercebox_slider_data_delete_ajax_callback',
+    'page arguments' => array(2),
+    'delivery callback' => 'ajax_deliver',
+    'access arguments' => array('access content'),
+  );
+  $items['admin/ui-elements/commercebox_slider'] = array(
+    'title' => 'Commercebox slider',
+    'page callback' => 'commercebox_slider_callback',
+    'access arguments' => array('administer content'),
+    'type' => MENU_NORMAL_ITEM,
+    'menu_name' => 'menu-admin-menu',
+
+  );
+  $items['commercebox_slider_resort'] = array(
+    'title' => 'Commercebox slider',
+    'page callback' => 'commercebox_slider_sortable_callback',
+    'delivery callback' => 'ajax_deliver',
+    'access arguments' => array('administer content'),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Callback function().
+ */
+function commercebox_slider_callback() {
+  drupal_add_library('system', 'drupal.ajax');
+  drupal_add_library('system', 'jquery.form');
+  $view = views_get_view('commercebox_slider');
+  $view->set_display('Master');
+  $view->is_cacheable = FALSE;
+  $view->pre_execute();
+  $view->execute();
+  $content = $view->render();
+  return $content;
+}
+
+/**
+ * Callback function().
+ */
+function commercebox_slider_sortable_callback() {
+  if (!empty($_POST['slides'])) {
+    $obj = json_decode($_POST['slides']);
+    $slides = $obj->slides;
+    foreach ($slides as $k => $obj) {
+      _commercebox_slider_queue_swap($obj->nid, $k + 1);
+    }
+  }
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function commercebox_slider_views_api() {
+  return array(
+    'api' => '3',
+    'path' => drupal_get_path('module', 'commercebox_slider') . '/views',
+  );
+}
+
+/**
+ * Ajax callback page.
+ */
+function commercebox_slider_data_ajax_callback($nid, $mode = NULL) {
+  drupal_add_library('system', 'drupal.ajax');
+  drupal_add_library('system', 'jquery.form');
+//  module_load_include('inc', 'node', 'node.pages');
+  $content = '';
+  $commands = array();
+
+  if ($nid == "remove") {
+    $commands[] = ajax_command_remove("#remove");
+    $commands[] = ajax_command_replace('.region-content .content', commercebox_slider_callback());
+
+    return array('#type' => 'ajax', '#commands' => $commands);
+  }
+  else {
+    if (is_numeric($nid)) {
+      $node = node_load($nid);
+
+      if ($mode == 'ajax') {
+
+
+        $form = drupal_get_form('form_edit_slide', $node);
+        $content = drupal_render($form);
+      }
+      else {
+        drupal_goto('node/' . $nid . '/edit');
+      }
+    }
+    if ($nid == "new") {
+      $node = node_load($nid);
+      $form = drupal_get_form('form_edit_slide', $node);
+      $content = drupal_render($form);
+
+    }
+  }
+  $remove_link = l(t('Close'), "data/remove/nojs", array(
+    'attributes' => array(
+      'class' => array('use-ajax', 'close'),
+    ),
+  ));
+//  $remove_link = '<div class="close"></div>';
+  $content = $remove_link . $content;
+  $content = "<div id=\"remove\">$content</div>";
+  ajax_command_remove('#remove');
+  $commands[] = ajax_command_after("#block-system-main", $content);
+
+
+  return array('#type' => 'ajax', '#commands' => $commands);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function commercebox_slider_form_node_form_alter(&$form, &$form_state, $form_id) {
+  if ($form['#node']->type == 'banner') {
+    $form['actions']['submit']['#submit'][] = 'commercebox_slider_node_submit';
+  }
+}
+
+/**
+ * Submit function().
+ */
+function commercebox_slider_node_submit($form, &$form_state) {
+  $form_state['redirect'] = '/admin/ui-elements/commercebox_slider';
+}
+
+/**
+ * Ajax callback page.
+ */
+function commercebox_slider_data_delete_ajax_callback($nid, $mode = NULL) {
+  drupal_add_library('system', 'drupal.ajax');
+  drupal_add_library('system', 'jquery.form');
+  $commands = array();
+  if ($mode == 'ajax') {
+    node_delete($nid);
+  }
+  else {
+    drupal_goto('node/' . $nid . '/edit');
+  }
+  $content = "";
+  $commands[] = ajax_command_after("#block-system-main .content", $content);
+
+  return array('#type' => 'ajax', '#commands' => $commands);
+}
+
+/**
+ * Save position for slider.
+ */
+function _commercebox_slider_queue_swap($nid, $pos) {
+  db_update('nodequeue_nodes')
+    ->fields(array('position' => $pos))
+    ->condition('nid', $nid)
+    ->execute();
+}
+
+
+function form_edit_slide($form, &$form_state, $node) {
+
+  $form['box'] = array(
+    '#type' => 'markup',
+    '#prefix' => '<div id="box">',
+    '#suffix' => '</div>',
+    '#markup' => '<h1>Create/Edit yor slide</h1>',
+  );
+  // This is the first form element. It's a textfield with a label, "Name"
+  $form['nid'] = array(
+    '#type' => 'hidden',
+    '#value' => empty($node->nid) ? '' : $node->nid,
+  );
+  $form['title'] = array(
+    '#type' => 'textfield',
+    '#title' => t('title'),
+    '#default_value' => empty($node->title) ? '' : $node->title,
+    '#required' => TRUE,
+  );
+  $form['body'] = array(
+    '#type' => 'text_format',
+    '#title' => t('Body'),
+    '#default_value' => empty($node->body[LANGUAGE_NONE][0]['value']) ? '' : $node->body[LANGUAGE_NONE][0]['value'],
+    '#format' => 'full_html',
+//    '#access' => FALSE,
+  );
+  $form['image'] = array(
+    '#title' => t('image'),
+    '#type' => 'managed_file',
+    '#description' => t('Please upload an image!'),
+    '#progress_indicator' => 'bar',
+    '#upload_location' => 'public://bg_images/',
+    '#default_value' => empty($node->field_image[LANGUAGE_NONE][0]['fid']) ? '' : $node->field_image[LANGUAGE_NONE][0]['fid'],
+    '#required' => TRUE,
+  );
+  $form['image_link'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Image link'),
+//    '#href' => 'node/' . $node->nid,
+    '#default_value' => empty($node->field_link[LANGUAGE_NONE][0]['url']) ? '' : $node->field_link[LANGUAGE_NONE][0]['url'],
+  );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#ajax' => array(
+      'callback' => 'ajax_example_submit_driven_callback',
+      'wrapper' => 'box',
+    ),
+    '#value' => t('Save')
+  );
+  return $form;
+}
+
+/**
+ * Ajax callback.
+ */
+function ajax_example_submit_driven_callback($form, $form_state) {
+  $element = $form['box'];
+  $element['#markup'] = "New slide are added.";
+
+  return $element;
+}
+
+/**
+ * Submit handler for form_example_tutorial_10().
+ */
+function form_edit_slide_submit($form, &$form_state) {
+//dsm($form_state);
+  global $user;
+  if (!empty($form_state['values']['nid'])) {
+    $node = node_load($form_state['values']['nid']);
+  } else {
+    $node = new stdClass();
+  }
+  $node->type = 'banner';
+  node_object_prepare($node);
+  $node->title    = $form_state['values']['title'];
+  $node->body[LANGUAGE_NONE][0]['value'] = $form_state['values']['body']['value'];
+  if (!empty($form_state['values']['image'])) {
+    $file_obj = file_load($form_state['values']['image']);
+    if ($file_obj) {
+      $file_obj->status = FILE_STATUS_PERMANENT;
+      file_save($file_obj);
+      file_usage_add($file_obj, 'user', 'user', $user->uid);
+    }
+  }
+  $node->field_image[LANGUAGE_NONE][0] = (array)$file_obj;
+  $node->field_link[LANGUAGE_NONE][0]['url'] = $form_state['values']['image_link'];
+  $node->language = LANGUAGE_NONE;
+  node_save($node);
+  drupal_goto('/data/remove/nojs');
+}

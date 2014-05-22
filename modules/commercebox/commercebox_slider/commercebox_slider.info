@@ -1,0 +1,9 @@
+name = Commercebox Slider
+description = Add slider settings for slider in main page.
+core = 7.x
+
+dependencies[] = views
+dependencies[] = views_ui
+dependencies[] = nodequeue
+; Include views handlers
+files[] = views/handlers/commercebox_slider_handler_link.inc

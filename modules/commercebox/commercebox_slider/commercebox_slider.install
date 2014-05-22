@@ -1,0 +1,19 @@
+<?php
+/**
+ * Implements hook_install().
+ */
+function commercebox_slider_install() {
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node');
+  $query->propertyCondition('status', 1);
+  $query->propertyCondition('type', 'banner');
+  $result = $query->execute();
+  $nodes = node_load_multiple(array_keys($result['node']));
+
+  $queue = nodequeue_load_queue_by_name('commercebox_slider');
+  $subqueue = nodequeue_load_subqueue($queue->qid);
+  foreach ($nodes as $node) {
+    nodequeue_subqueue_add($queue, $subqueue, $node->nid);
+    watchdog('Add to queue "commercebox_slider" node nid - ', "<pre>" . print_r($node->nid, 1) . "</pre>");
+  }
+}

@@ -15,7 +15,7 @@
           <div id="header">
           <div id="branding">
             <div class="logo-wrapper">
-              <img id="logo" src="profiles/commercebox_profile/themes/commercebox_install/logo.png" alt="Commercebox" />
+              <img id="logo" src="profiles/commercebox/themes/commercebox_install/logo.png" alt="Commercebox" />
             </div>
             <?php if ($title): ?><h1 class="page-title"><?php print $title; ?></h1><?php endif; ?>
           </div>

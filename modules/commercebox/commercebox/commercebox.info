@@ -1,9 +1,0 @@
-name = CommerceBox
-description = "CommerceBox Core"
-package = CommerceBox
-core = 7.x
-
-files[] = views/commercebox_views_handler_field_term_tree.inc
-
-dependencies[] = taxonomy_menu_block
-dependencies[] = views

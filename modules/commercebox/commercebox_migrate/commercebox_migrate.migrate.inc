@@ -193,6 +193,7 @@ class CommerceBoxProductBase extends CommerceBoxMigration {
     $this->addFieldMapping('created', 'created');
     $this->addFieldMapping('commerce_price', 'price');
     $this->addFieldMapping('field_description', 'description');
+    $this->addFieldMapping('cb_features', 'features');
     // Images
     $this->addFieldMapping('field_images', 'product_images');
     $this->addFieldMapping('field_images:file_replace')
@@ -211,6 +212,7 @@ class CommerceBoxProductBase extends CommerceBoxMigration {
     $columns[3] = array('price', 'price');
     $columns[4] = array('sku', 'sku');
     $columns[5] = array('images', 'images');
+    $columns[7] = array('features', 'features');
     return $columns;
   }
 

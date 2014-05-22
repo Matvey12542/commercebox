@@ -24,6 +24,18 @@ function commercebox_content_types_field_default_field_instances() {
         'type' => 'text_default',
         'weight' => 1,
       ),
+      'information_product' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'reviews_product' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
       'teaser' => array(
         'label' => 'above',
         'settings' => array(),
@@ -66,6 +78,18 @@ function commercebox_content_types_field_default_field_instances() {
           'image_style' => '',
         ),
         'type' => 'image',
+        'weight' => 0,
+      ),
+      'information_product' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'reviews_product' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
         'weight' => 0,
       ),
       'teaser' => array(
@@ -116,6 +140,18 @@ function commercebox_content_types_field_default_field_instances() {
         'type' => 'text_default',
         'weight' => 1,
       ),
+      'information_product' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'reviews_product' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
       'teaser' => array(
         'label' => 'hidden',
         'module' => 'text',
@@ -160,6 +196,18 @@ function commercebox_content_types_field_default_field_instances() {
           'image_style' => '',
         ),
         'type' => 'image',
+        'weight' => 0,
+      ),
+      'information_product' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'reviews_product' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
         'weight' => 0,
       ),
       'teaser' => array(
