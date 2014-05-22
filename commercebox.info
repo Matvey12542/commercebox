@@ -74,11 +74,14 @@ dependencies[] = inline_entity_form
 ;admin menu
 dependencies[] = admin_menu
 
+; Menu
+dependencies[] = menu_minipanels
+
 ;Commercebox slider
 dependencies[] = commercebox_slider
 
 ; CommerceBox
-dependencies[] = commercebox
+dependencies[] = commercebox_core
 dependencies[] = commercebox_connector
 dependencies[] = commercebox_apps
 dependencies[] = commercebox_product
