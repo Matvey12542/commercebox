@@ -88,11 +88,11 @@ projects[token][subdir] = "contrib"
 projects[views_date_format_sql][version] = 3.1
 projects[views_date_format_sql][subdir] = "contrib"
 
-projects[features_extra][version] = 7.x-1.0-beta1
+projects[features_extra][version] = 1.0-beta1
 projects[features_extra][subdir] = "contrib"
-projects[nodequeue][version] = 7.x-2.0-beta1
+projects[nodequeue][version] = 2.0-beta1
 projects[nodequeue][subdir] = "contrib"
-projects[views_ui][version] = 7.x-3.1
+projects[views_ui][version] = 3.1
 projects[views][subdir] = "contrib"
 
 
