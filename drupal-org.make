@@ -92,8 +92,7 @@ projects[features_extra][version] = 1.0-beta1
 projects[features_extra][subdir] = "contrib"
 projects[nodequeue][version] = 2.0-beta1
 projects[nodequeue][subdir] = "contrib"
-projects[views_ui][version] = 3.1
-projects[views][subdir] = "contrib"
+
 
 
 
