@@ -53,7 +53,7 @@
 	background: #9ee7ff;
 }
 #ui-elements-button-form input[value="default"] + label {
-	background: #0f7ad5;
+	background: #67B4E6;
 }
 #ui-elements-page-style-form input[value="263248"] + label,
 #ui-elements-button-form input[value="263248"] + label {
@@ -109,7 +109,7 @@
 }
 #edit-preview-image {
 	/*width: 50%;*/
-	float: right;
+	float: left;
 }
 /*#edit-preview-image img {
 	width: 100%;
@@ -152,4 +152,78 @@
 #id-button5{
   bottom: 60px;
   left: 400px;
+}
+#edit-form-button .form-item-bg-color-button,
+#edit-form-button  .form-item-bg-color,
+#ui-elements-button-form .form-item-pager-other-style,
+#ui-elements-button-form .form-item-page-style-color-page{
+  margin-left: 900px;
+}
+#color-picker-default, #color-picker, #color-picker-pager, #color-picker-page-style {
+  /*float: left;*/
+  margin-left: 900px;
+  position: relative;
+}
+
+.page-admin-ui-elements-button #edit-submit {
+  margin-left: 900px;
+  margin-bottom: 10px;
+}
+
+.page-admin-ui-elements-background #color-picker {
+  margin-left: 10px;
+}
+#ui-elements-button-form .form-item-pager-style {}
+#edit-settings {
+  margin-left: 920px;
+  width: 475px;
+  border: none;
+}
+@media screen and (max-width: 1760px){
+  #color-picker-default, #color-picker, #color-picker-pager, #color-picker-page-style {
+    margin-left: 10px;
+  }
+  #edit-form-button .form-item-bg-color-button, #edit-form-button  .form-item-bg-color,
+  #ui-elements-button-form .form-item-pager-other-style,
+  #ui-elements-button-form .form-item-page-style-color-page{
+    margin-left: 10px;
+  }
+  .page-admin-ui-elements-background #color-picker {
+    margin-left: 10px;
+    margin-bottom: 10px;
+  }
+  #edit-settings {
+    margin-left: 10px;
+    width: 98%;
+    border: 1px solid #d3d3d3;
+  }
+}
+#pager {
+  width: 100px;
+  height: 34px;
+  /*background-color: #000000;*/
+  /*border: 1px solid #000000;*/
+  position: absolute;
+  bottom: 530px;
+  left: 227px;
+}
+#pager .pager-round {
+  width: 19px;
+  height: 19px;
+  background-color: #afafaf;
+  position: absolute;
+  border-radius: 15px;
+  text-align: center;
+}
+#pager #round1 {
+  left: 22px;
+  top: 8px;
+}
+#pager #round2 {
+  left: 41px;
+  top: 8px;
+}
+#pager #round3 {
+  left: 60px;
+  top: 8px;
 }

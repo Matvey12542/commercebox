@@ -6,10 +6,14 @@
     attach: function (context, settings) {
       var $picker_default = $('.form-item-bg-color-button, #color-picker-default');
       $picker_default.hide();
+
       $('.form-item-bg-default input[type="radio"]').click(function() {
+        var $picker_default = $('.form-item-bg-color-button, #color-picker-default');
         $picker_default.hide();
         if($(this).val() == 'other') {
+          hideotherpicker();
           $picker_default.toggle();
+
         }
       });
       // PAGE ELEM
@@ -18,6 +22,7 @@
       $('.form-item-bg-default-page input[type="radio"]').click(function() {
         $picker_default.hide();
         if($(this).val() == 'other') {
+          hideotherpicker();
           $picker_default.toggle();
         }
       });
@@ -27,6 +32,7 @@
       $('.form-item-bg-rounded input[type="radio"]').click(function() {
         $colorpicker.hide();
         if ($(this).val() == 'other') {
+          hideotherpicker();
           $colorpicker.toggle();
         }
       });
@@ -36,6 +42,7 @@
       $('.form-item-pager-style input[type="radio"]').click(function() {
         $picker_pager.hide();
         if($(this).val() == 'other') {
+          hideotherpicker();
           $picker_pager.toggle();
         }
       });
@@ -72,29 +79,36 @@
     }
   }
   // for buttons page
-//  var $elem =
   Drupal.behaviors.buttonsElements = {
     attach: function (context, settings) {
-//      var $bg_color = $('.form-item-bg-color input');
+      // Add blok area for pafer element
+      $('.page-admin-ui-elements-button #edit-preview-image').append('<div class="pager" id="pager"><div class="pager-round" id="round1">1</div><div class="pager-round" id="round2">2</div><div class="pager-round" id="round3">3</div></div>');
+
       //Add 6 div to image
       for(var i=0; i<6; i++) {
         $('.page-admin-ui-elements-button #edit-preview-image').append('<div class="image-button" id="id-button'+i+'">Add to cart</div>');
       }
       //Default bacground
-      var $defbacg =  $('input.form-submit').css('background');
-      var $radius = $('input.form-submit').css('border-radius');
+      var $defbacg =  $('input.form-submit').attr( "color" );
+      var $radius = $('input.form-submit').attr( "round" ) + 'px';
+      var $pager_color = $('input.form-submit').attr( "pagercolor" );
+      var $background = $('input.form-submit').attr( "pageelemcolor" );
+
       if ($radius == '') {
         $radius = 'none';
       }
       var $imgbacg = $('#ui-elements-button-form input[name="default_pager_style"]').val();
       $('#edit-preview-image img').css('background',$imgbacg);
-      $('.image-button').css({'background': $defbacg, 'border-radius': $radius});
-      //onclick set bacground color   kvadrat
+      // Set default elements
+      $('.image-button').css({'background': $defbacg, 'border-radius': $radius}); // set default buttons
+
+      $('#pager .pager-round').css('background',$pager_color); // pager
+      $('#edit-preview-image img').css('background',$background); //background
+
 
 
       $('#edit-bg-default input[type="radio"]').click(function() {
         var $background = $(this).next().css('background');
-        console.log($background,'bg');
         if($(this).val() == 'other') {
           $background = $('.form-item-bg-color-button input').val();
         }
@@ -122,31 +136,39 @@
           });
         });
       });
-      // Clic to Rounded Buttons  pager
+      // Clic to Page elem
       $('.form-item-bg-default-page input[type="radio"]').click(function() {
         var $background = $(this).next().css('background');
         if($(this).val() == 'other') {
           $background = $('.form-item-page-style-color-page input').val();
         }
         $('#edit-preview-image img').css('background',$background);
-
-        $('#color-picker-pager').hover(function() {
+        $('#color-picker-page-style').hover(function() {
           $(this).mousemove(function(){
-             $bg_color = $('.form-item-pager-other-style input').val();
-            $('#edit-preview-image img').css('background',$bg_color);
+            $bg_color = $('.form-item-page-style-color-page input').val();
+            $('#edit-preview-image img').css({'background': $bg_color});
+            console.log($bg_color);
           });
         });
       });
 
-      // page elements
-//      var $picker_pager = $('.form-item-bg-default-page, #color-picker-page-style');
-//      $picker_pager.hide();
-//      $('.form-item-bg-default-page input[type="radio"]').click(function() {
-//        $picker_pager.hide();
-//        if($(this).val() == 'other') {
-//          $picker_pager.toggle();
-//        }
-//      });
+      // pager click
+      $('.form-item-pager-style input[type="radio"]').click(function() {
+        var $background = $(this).next().css('background');
+        if($(this).val() == 'other') {
+          $background = $('#edit-pager-other-style').val();
+        }
+        $('#pager .pager-round').css('background',$background);
+//
+        $('#color-picker-pager').hover(function() {
+          $(this).mousemove(function(){
+            $bg_color = $('#edit-pager-other-style').css('background');
+
+            $('#pager .pager-round').css('background',$bg_color);
+
+          });
+        });
+      });
     }
   }
 
@@ -225,12 +247,13 @@
     {
       $('#edit-preview-image img').css('background-repeat', 'no-repeat');
     }
-
-
   }
 
-//  $(document).ready(function() {
-//    updateimage();
-//  });
+  function hideotherpicker() {
+    $('#color-picker-default, .form-item-bg-color-button').hide();
+    $('#color-picker, .form-item-bg-color').hide();
+    $('#color-picker-pager, .form-item-pager-other-style').hide();
+    $('#color-picker-page-style, .form-item-page-style-color-page').hide();
 
+  }
 })(jQuery);

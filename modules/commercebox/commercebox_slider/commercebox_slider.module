@@ -9,15 +9,12 @@
  */
 function commercebox_slider_init() {
   drupal_add_css(drupal_get_path('module', 'commercebox_slider') . '/css/css_commercebox_slider.css', array(
-      'group' => CSS_DEFAULT,
-    ));
+    'group' => CSS_DEFAULT,
+  ));
   drupal_add_js(drupal_get_path('module', 'commercebox_slider') . '/js/main.js', array(
-      'group' => CSS_DEFAULT,
-    ));
+    'group' => CSS_DEFAULT,
+  ));
   drupal_add_library('system', 'ui.sortable');
-//  if (($_GET['q'] == 'system/ajax' || strstr($_GET['q'], 'file/ajax/')) && preg_match('/^[a-z_]+_node_form/', $_POST['form_id'])) {
-//    module_load_include('inc', 'node', 'node.pages');
-//  }
 }
 
 /**
@@ -66,7 +63,6 @@ function commercebox_slider_menu() {
     'access arguments' => array('administer content'),
     'type' => MENU_CALLBACK,
   );
-
   return $items;
 }
 
@@ -109,28 +105,22 @@ function commercebox_slider_views_api() {
 }
 
 /**
- * Ajax callback page.
+ * Slider callback page.
  */
 function commercebox_slider_data_ajax_callback($nid, $mode = NULL) {
   drupal_add_library('system', 'drupal.ajax');
   drupal_add_library('system', 'jquery.form');
-//  module_load_include('inc', 'node', 'node.pages');
   $content = '';
   $commands = array();
-
   if ($nid == "remove") {
     $commands[] = ajax_command_remove("#remove");
-    $commands[] = ajax_command_replace('.region-content .content', commercebox_slider_callback());
-
+    $commands[] = ajax_command_replace('.view-commercebox-slider.view-display-id-default', commercebox_slider_callback());
     return array('#type' => 'ajax', '#commands' => $commands);
   }
   else {
     if (is_numeric($nid)) {
       $node = node_load($nid);
-
       if ($mode == 'ajax') {
-
-
         $form = drupal_get_form('form_edit_slide', $node);
         $content = drupal_render($form);
       }
@@ -142,7 +132,6 @@ function commercebox_slider_data_ajax_callback($nid, $mode = NULL) {
       $node = node_load($nid);
       $form = drupal_get_form('form_edit_slide', $node);
       $content = drupal_render($form);
-
     }
   }
   $remove_link = l(t('Close'), "data/remove/nojs", array(
@@ -150,13 +139,10 @@ function commercebox_slider_data_ajax_callback($nid, $mode = NULL) {
       'class' => array('use-ajax', 'close'),
     ),
   ));
-//  $remove_link = '<div class="close"></div>';
   $content = $remove_link . $content;
   $content = "<div id=\"remove\">$content</div>";
   ajax_command_remove('#remove');
   $commands[] = ajax_command_after("#block-system-main", $content);
-
-
   return array('#type' => 'ajax', '#commands' => $commands);
 }
 
@@ -189,9 +175,8 @@ function commercebox_slider_data_delete_ajax_callback($nid, $mode = NULL) {
   else {
     drupal_goto('node/' . $nid . '/edit');
   }
-  $content = "";
-  $commands[] = ajax_command_after("#block-system-main .content", $content);
-
+//  $commands[] = ajax_command_remove("#remove");
+  $commands[] = ajax_command_replace('.view-commercebox-slider.view-display-id-default', commercebox_slider_callback());
   return array('#type' => 'ajax', '#commands' => $commands);
 }
 
@@ -205,9 +190,10 @@ function _commercebox_slider_queue_swap($nid, $pos) {
     ->execute();
 }
 
-
+/**
+ * Form new node (type = banner).
+ */
 function form_edit_slide($form, &$form_state, $node) {
-
   $form['box'] = array(
     '#type' => 'markup',
     '#prefix' => '<div id="box">',
@@ -230,7 +216,6 @@ function form_edit_slide($form, &$form_state, $node) {
     '#title' => t('Body'),
     '#default_value' => empty($node->body[LANGUAGE_NONE][0]['value']) ? '' : $node->body[LANGUAGE_NONE][0]['value'],
     '#format' => 'full_html',
-//    '#access' => FALSE,
   );
   $form['image'] = array(
     '#title' => t('image'),
@@ -244,7 +229,6 @@ function form_edit_slide($form, &$form_state, $node) {
   $form['image_link'] = array(
     '#type' => 'textfield',
     '#title' => t('Image link'),
-//    '#href' => 'node/' . $node->nid,
     '#default_value' => empty($node->field_link[LANGUAGE_NONE][0]['url']) ? '' : $node->field_link[LANGUAGE_NONE][0]['url'],
   );
   $form['submit'] = array(
@@ -264,7 +248,6 @@ function form_edit_slide($form, &$form_state, $node) {
 function ajax_example_submit_driven_callback($form, $form_state) {
   $element = $form['box'];
   $element['#markup'] = "New slide are added.";
-
   return $element;
 }
 
@@ -272,16 +255,16 @@ function ajax_example_submit_driven_callback($form, $form_state) {
  * Submit handler for form_example_tutorial_10().
  */
 function form_edit_slide_submit($form, &$form_state) {
-//dsm($form_state);
   global $user;
   if (!empty($form_state['values']['nid'])) {
     $node = node_load($form_state['values']['nid']);
-  } else {
+  }
+  else {
     $node = new stdClass();
   }
   $node->type = 'banner';
   node_object_prepare($node);
-  $node->title    = $form_state['values']['title'];
+  $node->title = $form_state['values']['title'];
   $node->body[LANGUAGE_NONE][0]['value'] = $form_state['values']['body']['value'];
   if (!empty($form_state['values']['image'])) {
     $file_obj = file_load($form_state['values']['image']);
@@ -291,7 +274,7 @@ function form_edit_slide_submit($form, &$form_state) {
       file_usage_add($file_obj, 'user', 'user', $user->uid);
     }
   }
-  $node->field_image[LANGUAGE_NONE][0] = (array)$file_obj;
+  $node->field_image[LANGUAGE_NONE][0] = (array) $file_obj;
   $node->field_link[LANGUAGE_NONE][0]['url'] = $form_state['values']['image_link'];
   $node->language = LANGUAGE_NONE;
   node_save($node);

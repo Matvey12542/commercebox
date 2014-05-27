@@ -25,7 +25,14 @@ function ui_elements_bg_form($form, &$form_state) {
     '#title' => t('Preview'),
     '#markup' => theme('image', array('path' => $path)),
   );
-  $form['ui_settings']['bg_image'] = array(
+  $form['settings'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Settings'),
+    '#attributes' => array(
+      'class' => array('settings'),
+    ),
+  );
+  $form['settings']['ui_settings']['bg_image'] = array(
     '#title' => t('Background image'),
     '#type' => 'managed_file',
     '#description' => t('Please upload an image!'),
@@ -34,12 +41,12 @@ function ui_elements_bg_form($form, &$form_state) {
     '#default_value' => variable_get('ui_settings_bg_image_fid'),
   );
 
-  $form['ui_settings']['bg_repeat'] = array(
+  $form['settings']['ui_settings']['bg_repeat'] = array(
     '#type' => 'checkbox',
     '#title' => t('Background repeat'),
     '#default_value' => !empty($repeat)&&($repeat!='no-repeat') ? 1:0,
   );
-  $form['ui_settings']['bg_repeat_x'] = array(
+  $form['settings']['ui_settings']['bg_repeat_x'] = array(
     '#type' => 'checkbox',
     '#title' => t('Repeat X'),
     '#default_value' => variable_get('repeat-x'),
@@ -49,7 +56,7 @@ function ui_elements_bg_form($form, &$form_state) {
       ),
     ),
   );
-  $form['ui_settings']['bg_repeat_y'] = array(
+  $form['settings']['ui_settings']['bg_repeat_y'] = array(
     '#type' => 'checkbox',
     '#title' => t('Repeat Y'),
     '#default_value' => variable_get('repeat-y'),
@@ -59,7 +66,7 @@ function ui_elements_bg_form($form, &$form_state) {
       ),
     ),
   );
-  $form['ui_settings']['bg_color'] = array(
+  $form['settings']['ui_settings']['bg_color'] = array(
     '#type' => 'textfield',
     '#title' => t('Color'),
     '#suffix' => '<div id="color-picker"></div>',
@@ -84,12 +91,12 @@ function ui_elements_bg_form($form, &$form_state) {
     )
   );
 
-  $form['ui_settings']['default'] = array(
+  $form['settings']['ui_settings']['default'] = array(
     '#type' => 'submit',
     '#value' => t('Default value'),
   );
 
-  $form['ui_settings']['submit'] = array(
+  $form['settings']['ui_settings']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
   );
@@ -143,9 +150,10 @@ else {
   if ($form_state['values']['op'] == 'Default value') {
     $repeat = 'auto';
     variable_set('ui_settings_bg_image_fid', '');
-    variable_set('ui_settings_bg_color', 'def');
+    variable_set('ui_settings_bg_color', '#ffffff');
     variable_set('repeat-y','');
     variable_set('repeat-x','');
+    variable_set('ui_settings_bg_repeat', '');
   }
 }
 
@@ -244,11 +252,7 @@ function ui_elements_button_form($form, &$form_state) {
     )
   );
 
-  $form['ui_settings']['pager_style'] = array(
-    '#type' => 'radios',
-    '#title' => t('Pager color'),
-    '#options' => $active,
-  );
+
   $form['ui_settings']['form_button']['bg_color'] = array(
     '#type' => 'textfield',
     '#title' => t('Color'),
@@ -273,15 +277,18 @@ function ui_elements_button_form($form, &$form_state) {
       )
     )
   );
-  $form['ui_settings']['form_button']['default_pager_style'] = array(
-    '#type' => 'hidden',
-    '#default_value' => variable_get('ui_settings_pager_style'),
+  // Pager!!!
+  $form['ui_settings']['pager_style'] = array(
+    '#type' => 'radios',
+    '#title' => t('Pager color'),
+    '#options' => $active,
   );
+
   $form['ui_settings']['pager_other_style'] = array(
     '#type' => 'textfield',
     '#title' => t('Color'),
     '#suffix' => '<div id="color-picker-pager"></div>',
-    '#default_value' => variable_get('ui_settings_pager_style'),
+    '#default_value' => variable_get('ui_settings_pager_style', '#479ec2'),
     '#maxlength' => 7,
     '#size' => 7,
     '#attached' => array(
@@ -302,59 +309,17 @@ function ui_elements_button_form($form, &$form_state) {
     )
   );
 
-
   // Page style.
-//  $image = 'page_styles.png';
-//  $path = drupal_get_path('module', 'ui_elements') . "/images/$image";
-//  if (sizeof(module_implements('ui_elements_change_page_style_image')) > 0) {
-//    $path = module_invoke_all('ui_elements_change_page_style_image');
-//    $path = $path[0];
-//  }
 
-//  $active = array(
-//    'default' => t('Default'),
-//    '263248' => t('Gray'),
-//    '2CC36B' => t('Green'),
-//    '4AA3DF' => t('Blue'),
-//    'F16E3F' => t('Orange'),
-//    'EA6153' => t('Red'),
-//    'other' => t('Other')
-//  );
-//  $form['ui_settings']['preview-image'] = array(
-//    '#type' => 'item',
-//    '#title' => t('Preview'),
-//    '#markup' => theme('image', array('path' => $path)),
-//  );
   $form['ui_settings']['bg_default_page'] = array(
     '#type' => 'radios',
     '#title' => t('Page elements'),
     '#options' => $active,
   );
-//  $form['ui_settings']['page_style_color_page'] = array(
-//    '#type' => 'textfield',
-//    '#title' => t('Color'),
-//    '#suffix' => '<div id="color-picker-page-style"></div>',
-//    '#default_value' => variable_get('ui_settings_page_style_color'),
-//    '#maxlength' => 7,
-//    '#size' => 7,
-//    '#attached' => array(
-//      'library' => array(
-//        array('system', 'farbtastic'),
-//      ),
-//      'js' => array(
-//        array(
-//          'type' => 'inline',
-//          'data' =>
-//            '(function($) {
-//              $(document).ready(function() {
-//                $("#color-picker-page-style").farbtastic("#edit-page-style-color-page");
-//
-//              });
-//            }) (jQuery);'
-//        ),
-//      ),
-//    ),
-//  );
+  $form['ui_settings']['default_bg_default_page'] = array(
+    '#type' => 'hidden',
+    '#default_value' => variable_get('ui_settings_page_style_color'),
+  );
   $form['ui_settings']['page_style_color_page'] = array(
     '#type' => 'textfield',
     '#title' => t('Color'),
@@ -379,13 +344,17 @@ function ui_elements_button_form($form, &$form_state) {
       )
     )
   );
-//  $form['ui_settings']['submit'] = array(
-//    '#type' => 'submit',
-//    '#value' => t('Save'),
-//  );
+
   $form['ui_settings']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
+    '#attributes' => array(
+      'round' => array(variable_get('ui_settings_button_rounded',0)),
+      'color' => array(variable_get('ui_settings_button_color')),
+      'pagercolor' => array(variable_get('ui_settings_pager_style')),
+      'pageelemcolor' => array(variable_get('ui_settings_page_style_color')),
+
+    ),
   );
   return $form;
 }
@@ -394,7 +363,9 @@ function ui_elements_button_form($form, &$form_state) {
  * Form submission handler for ui_elements_button_form().
  */
 function ui_elements_button_form_submit($form, &$form_state) {
+
   $pager_style = $form_state['values']['pager_style'];
+
   $bg_rounded = $form_state['values']['bg_rounded'];
   $bg_default = $form_state['values']['bg_default'];
 
@@ -413,11 +384,15 @@ function ui_elements_button_form_submit($form, &$form_state) {
       break;
 
     case 'other':
-      $color = $form_state['values']['bg_color'];
+      $color = $form_state['values']['bg_color_button']; //
+      if ($bg_rounded == 'other') {
+        $color = $form_state['values']['bg_color']; //
+      }
       break;
 
     case 'default':
-      $color = '#0f7ad5';
+//      $color = '#67B4E6';
+      $color = '#';
       break;
 
     default:
@@ -430,7 +405,7 @@ function ui_elements_button_form_submit($form, &$form_state) {
       break;
 
     case 'default':
-      $pager_style = 'none';
+      $pager_style = '#';
       break;
     case '':
       $pager_style = variable_get('ui_settings_pager_style');
@@ -442,98 +417,21 @@ function ui_elements_button_form_submit($form, &$form_state) {
   }
   variable_set('ui_settings_pager_style', $pager_style);
   variable_set('ui_settings_button_color', $color);
+
   // Page style
+
   if ($form_state['values']['bg_default_page'] == 'other') {
     $style_color = $form_state['values']['page_style_color_page'];
   }
 else {
     $style_color = '#' . $form_state['values']['bg_default_page'];
     if ($form_state['values']['bg_default_page'] == 'default') {
-      $style_color = '#67B4E6';
+//      $style_color = '#67B4E6';
+      $style_color = '#';
     }
+  if ($form_state['values']['bg_default_page'] == '') {
+    $style_color = variable_get('ui_settings_page_style_color');
+  }
   }
   variable_set('ui_settings_page_style_color', $style_color);
 }
-
-/**
- * Form constructor for the page elements style settings.
- *
- * @see ui_elements_page_style_form_submit()
- * @ingroup forms
- */
-//function ui_elements_page_style_form($form, &$form_state) {
-//
-//  $image = 'page_styles.png';
-//  $path = drupal_get_path('module', 'ui_elements') . "/images/$image";
-//  if (sizeof(module_implements('ui_elements_change_page_style_image')) > 0) {
-//    $path = module_invoke_all('ui_elements_change_page_style_image');
-//    $path = $path[0];
-//  }
-//
-//  $active = array(
-//    'default' => t('Default'),
-//    '263248' => t('Gray'),
-//    '2CC36B' => t('Green'),
-//    '4AA3DF' => t('Blue'),
-//    'F16E3F' => t('Orange'),
-//    'EA6153' => t('Red'),
-//    'other' => t('Other')
-//  );
-//  $form['ui_settings']['preview-image'] = array(
-//    '#type' => 'item',
-//    '#title' => t('Preview'),
-//    '#markup' => theme('image', array('path' => $path)),
-//  );
-//  $form['ui_settings']['bg_default'] = array(
-//    '#type' => 'radios',
-//    '#title' => t('Default Buttons'),
-//    '#options' => $active,
-//  );
-//  $form['ui_settings']['page_style_color'] = array(
-//    '#type' => 'textfield',
-//    '#title' => t('Color'),
-//    '#suffix' => '<div id="color-picker-page-style"></div>',
-//    '#default_value' => variable_get('ui_settings_page_style_color'),
-//    '#maxlength' => 7,
-//    '#size' => 7,
-//    '#attached' => array(
-//      'library' => array(
-//        array('system', 'farbtastic'),
-//      ),
-//      'js' => array(
-//        array(
-//          'type' => 'inline',
-//          'data' =>
-//            '(function($) {
-//              $(document).ready(function() {
-//                $("#color-picker-page-style").farbtastic("#edit-page-style-color");
-//                // $("#color-picker-page-style").farbtastic("#edit-preview img");
-//              });
-//            }) (jQuery);'
-//        ),
-//      ),
-//    ),
-//  );
-//  $form['ui_settings']['submit'] = array(
-//    '#type' => 'submit',
-//    '#value' => t('Save'),
-//  );
-//
-//  return $form;
-//}
-//
-///**
-// * Form submission handler for ui_elements_page_style_form().
-// */
-//function ui_elements_page_style_form_submit($form, &$form_state) {
-//  if ($form_state['values']['bg_default'] == 'other') {
-//    $style_color = $form_state['values']['page_style_color'];
-//  }
-//  else {
-//    $style_color = '#' . $form_state['values']['bg_default'];
-//    if ($form_state['values']['bg_default'] == 'default') {
-//      $style_color = '#67B4E6';
-//    }
-//  }
-//  variable_set('ui_settings_page_style_color', $style_color);
-//}
