@@ -121,37 +121,36 @@
   position: absolute;
   padding: 0;
   margin: 0;
-
-  width: 39px;
-  height: 13px;
+  width: 64px;
+  height: 22px;
   text-align: center;
-  font-size: 8px;
-  line-height: 14px;
+  font-size: 10px;
+  line-height: 22px;
   background-color: #0E73CA;
 }
 #id-button0{
-  bottom: 220px;
-  left: 170px;
+  bottom: 308px;
+  left: 248px;
 }
 #id-button1{
-  bottom: 228px;
-  left: 286px;
+  bottom: 320px;
+  left: 413px;
 }
 #id-button2{
-  bottom: 222px;
-  left: 400px;
+  bottom: 308px;
+  left: 580px;
 }
 #id-button3{
-  bottom: 60px;
-  left: 170px;
+  bottom: 78px;
+  left: 249px;
 }
 #id-button4{
-  bottom: 52px;
-  left: 285px;
+  bottom: 67px;
+  left: 413px;
 }
 #id-button5{
-  bottom: 60px;
-  left: 400px;
+  bottom: 78px;
+  left: 578px;
 }
 #edit-form-button .form-item-bg-color-button,
 #edit-form-button  .form-item-bg-color,
