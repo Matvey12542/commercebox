@@ -37,7 +37,11 @@ function commercebox_slider_views_queue_views_default_views() {
   $handler->display->display_options['footer']['area']['table'] = 'views';
   $handler->display->display_options['footer']['area']['field'] = 'area';
   $handler->display->display_options['footer']['area']['label'] = 'new';
-  $handler->display->display_options['footer']['area']['content'] = '<a href="/data/new" class=\'use-ajax new-slide\'> new </a>';
+  $handler->display->display_options['footer']['area']['content'] = l(t('new'), "data/new",
+    array(
+      'attributes' => array(
+        'class' => array('use-ajax', 'new-slide'),
+      )));
   $handler->display->display_options['footer']['area']['format'] = 'full_html';
   /* No results behavior: Global: Text area */
   $handler->display->display_options['empty']['area']['id'] = 'area';
@@ -45,7 +49,11 @@ function commercebox_slider_views_queue_views_default_views() {
   $handler->display->display_options['empty']['area']['field'] = 'area';
   $handler->display->display_options['empty']['area']['label'] = 'link add';
   $handler->display->display_options['empty']['area']['empty'] = TRUE;
-  $handler->display->display_options['empty']['area']['content'] = '<a href="/data/new/nojs" class="use-ajax new-slide"> new </a>';
+  $handler->display->display_options['empty']['area']['content'] = l(t('new'), "data/new",
+    array(
+      'attributes' => array(
+        'class' => array('use-ajax', 'new-slide'),
+      )));
   $handler->display->display_options['empty']['area']['format'] = 'filtered_html';
   /* Relationship: Nodequeue: Queue */
   $handler->display->display_options['relationships']['nodequeue_rel']['id'] = 'nodequeue_rel';
