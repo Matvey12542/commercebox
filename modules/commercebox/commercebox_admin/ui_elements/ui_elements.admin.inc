@@ -318,13 +318,13 @@ function ui_elements_button_form($form, &$form_state) {
   );
   $form['ui_settings']['default_bg_default_page'] = array(
     '#type' => 'hidden',
-    '#default_value' => variable_get('ui_settings_page_style_color'),
+    '#default_value' => variable_get('ui_settings_page_style_color','#'),
   );
   $form['ui_settings']['page_style_color_page'] = array(
     '#type' => 'textfield',
     '#title' => t('Color'),
     '#suffix' => '<div id="color-picker-page-style"></div>',
-    '#default_value' => variable_get('ui_settings_page_style_color'),
+    '#default_value' => variable_get('ui_settings_page_style_color','#'),
     '#maxlength' => 7,
     '#size' => 7,
     '#attached' => array(

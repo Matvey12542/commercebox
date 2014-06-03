@@ -142,3 +142,12 @@ body #process {
 .page-admin-ui-elements-commercebox-slider #remove {
   font-size: 12px;
 }
+#remove .alert-block {
+  width: 100%;
+}
+body #remove .alert-block .close {
+  opacity: 0.2;
+}
+.views-slideshow-cycle-main-frame-row-item .views-field-title span {
+  z-index: 3;
+}

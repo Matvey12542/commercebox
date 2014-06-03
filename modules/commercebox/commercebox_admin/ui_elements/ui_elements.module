@@ -64,6 +64,7 @@ function ui_elements_menu() {
  * Implements hook_init().
  */
 function ui_elements_init() {
+  drupal_add_css(drupal_get_path('theme', 'cb') . '/css/ui_buttons.css', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
   drupal_add_js(drupal_get_path('module', 'ui_elements') . '/js/ui_elements.js', 'file');
   drupal_add_css(drupal_get_path('module', 'ui_elements') . '/css/ui_elements.css', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
 
@@ -83,7 +84,7 @@ function ui_elements_init() {
   }
   $bg_style = 'body.html { background: ' . $bg_style . ';}';
 
-  $page_style_color = variable_get('ui_settings_page_style_color');
+  $page_style_color = variable_get('ui_settings_pager_style');
   $page_style_color = '
   body .galleryformatter:hover .slide-button,
   body .pane-commercebox-slideshow .views-slideshow-controls-bottom span a {
@@ -107,10 +108,14 @@ function ui_elements_init() {
     border-color: ' . $page_style_color . ';
   }
   body .commercebox-catalog-content .views-field-add-to-cart-form input:hover,
-  body .view-catalog-node-index .views-field-add-to-cart-form input:hover,
   body .form-submit:hover{
-    background:' . $page_style_color . ' !important;
-    animation: none;
+    background:' . $page_style_color .';
+  }
+  body .pane-commercebox-slideshow .views-slideshow-pager-field-item .views-content-counter {
+    background:' . $page_style_color .';
+  }
+  body .pane-commercebox-slideshow .views-slideshow-pager-field-item.active .views-content-counter {
+    background: white;
   }
   ';
   $button_color = "input.form-submit { background: " . variable_get('ui_settings_button_color') . "!important; border-radius:" . variable_get('ui_settings_button_rounded') . "px !important;}";
