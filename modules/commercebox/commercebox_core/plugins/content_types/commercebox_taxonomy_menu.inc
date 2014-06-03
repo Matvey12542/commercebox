@@ -13,7 +13,7 @@ $plugin = array(
   'title'           => t('Categories menu'),
   'single'          => TRUE,
   'content_types'   => array('no_context_content_type'),
-  'render callback' => 'commercebox_taxonomy_menu_render',
+  'render callback' => 'commercebox_core_taxonomy_menu_render',
   'category'        => array(t('CommerceBox'), -12),
 );
 
@@ -32,11 +32,11 @@ $plugin = array(
  * @return Object
  *   An object with at least title and content.
  */
-function commercebox_taxonomy_menu_render($subtype, $conf, $args, $context = NULL) {
-  $config = taxonomy_menu_block_get_config('commercebox_category_menu');
+function commercebox_core_taxonomy_menu_render($subtype, $conf, $args, $context = NULL) {
+  $config = taxonomy_menu_block_get_config('commercebox_core_category_menu');
   if (empty($config)) {
-    commercebox_taxonomy_menu_set_config('commercebox_category_menu');
-    $config = taxonomy_menu_block_get_config('commercebox_category_menu');
+    commercebox_core_taxonomy_menu_set_config('commercebox_core_category_menu');
+    $config = taxonomy_menu_block_get_config('commercebox_core_category_menu');
   }
   $block = taxonomy_menu_block_build($config);
   $block['title'] = $block['subject'];
@@ -47,7 +47,7 @@ function commercebox_taxonomy_menu_render($subtype, $conf, $args, $context = NUL
 /**
  * Set taxonomy menu block config params.
  */
-function commercebox_taxonomy_menu_set_config($delta) {
+function commercebox_core_taxonomy_menu_set_config($delta) {
   module_load_include('inc', 'taxonomy_menu_block', 'taxonomy_menu_block.admin');
 
   $taxonomy_menu_block = array();

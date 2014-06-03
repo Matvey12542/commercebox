@@ -19,7 +19,7 @@ function commercebox_core_feature_injection_form($form, &$form_state) {
 /**
  * A submit function for commercebox_feature_injection_form to clear view cache.
  */
-function commercebox_feature_injection_form_submit($form, &$form_state) {
+function commercebox_core_feature_injection_form_submit($form, &$form_state) {
   views_invalidate_cache();
 }
 
@@ -145,10 +145,10 @@ function commercebox_core_filters_settings_form($form, &$form_state) {
 
 
 /**
- * Submit handler for commercebox_filters_settings_form().
+ * Submit handler for commercebox_core_filters_settings_form().
  */
 function commercebox_core_filters_settings_form_submit($form, $form_state) {
   $values = $form_state['values']['filters'];
   uasort($values, 'drupal_sort_weight');
-  variable_set('commercebox_filters_settings', $values);
+  variable_set('commercebox_core_filters_settings', $values);
 }

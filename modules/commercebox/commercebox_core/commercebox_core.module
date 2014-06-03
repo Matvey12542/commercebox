@@ -24,7 +24,7 @@ function commercebox_core_menu() {
   $items['admin/config/development/feature-injection'] = array(
     'title' => 'Feature-injection settings',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('commercebox_feature_injection_form'),
+    'page arguments' => array('commercebox_core_feature_injection_form'),
     'access arguments' => array('access administration pages'),
     'description' => 'Enable or disable feature-injection settings.',
     'type' => MENU_NORMAL_ITEM,
@@ -46,7 +46,7 @@ function commercebox_core_menu() {
     'title' => 'Filters settings',
     'description' => 'Configure CommerceBox catalog filters.',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('commercebox_filters_settings_form'),
+    'page arguments' => array('commercebox_core_filters_settings_form'),
     'access arguments' => array('access administration pages'),
     'weight' => -60,
     'file' => 'includes/commercebox.admin.inc',
@@ -61,7 +61,7 @@ function commercebox_core_menu() {
  */
 function commercebox_core_theme() {
   return array(
-    'commercebox_filters_settings_form' => array(
+    'commercebox_core_filters_settings_form' => array(
       'render element' => 'form',
       'file' => 'includes/commercebox.theme.inc',
     ),
