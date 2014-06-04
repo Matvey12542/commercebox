@@ -118,6 +118,19 @@ function commercebox_product_create_basic_fields_submit($form, &$form_state) {
       }
     }
   }
+
+  if (!empty($form_state['values']['product_type']['name'])) {
+    $item = array(
+      'link_path' => 'admin/commercebox/product-type/' . $form_state['values']['product_type']['name'],
+      'link_title' => $form_state['values']['product_type']['name'],
+      'menu_name' => 'menu-admin-menu', // Menu machine name, for example: main-menu
+      'weight' => 0,
+      'language' => LANGUAGE_NONE,
+      'plid' => 562, // Parent menu item, 0 if menu item is on top level
+      'module' => 'menu',
+    );
+    menu_link_save($item);
+  }
 }
 
 
