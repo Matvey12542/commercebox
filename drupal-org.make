@@ -21,6 +21,7 @@ projects[commerce_features][version] = 1.0-rc1
 projects[commerce_features][subdir] = "contrib"
 projects[commerce_migrate][version] = 1.1
 projects[commerce_migrate][subdir] = "contrib"
+projects[commerce_price][patch] = "https://drupal.org/files/undefined-index-amount-1819318-1.patch"
 projects[ctools][version] = 1.3
 projects[ctools][subdir] = "contrib"
 projects[date][version] = 2.6
