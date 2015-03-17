@@ -51,7 +51,7 @@ function ui_elements_menu() {
   $items['admin/ui-elements/payment_settings'] = array(
     'title' => 'Payment settings',
     'page callback' => 'commercebox_payment_settings_callback',
-    'access arguments' => array('Administer payment methods'),
+    'access arguments' => array('administer permissions'),
     'file' => 'payment_settings.admin.inc',
     'type' => MENU_NORMAL_ITEM,
     'menu_name' => 'menu-admin-menu',

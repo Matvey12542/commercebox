@@ -223,17 +223,14 @@ function commercebox_base_product_type_field_default_field_instances() {
       ),
       'default' => array(
         'label' => 'hidden',
-        'module' => 'galleryformatter',
+        'module' => 'image',
         'settings' => array(
-          'link_to_full' => 1,
-          'link_to_full_style' => 0,
-          'linking_method' => 'show_full_link',
-          'modal' => 'none',
-          'slide_style' => 'galleryformatter_slide',
-          'style' => 'Greenarrows',
-          'thumb_style' => 'galleryformatter_thumb',
+          'image_link' => '',
+          'image_style' => '',
+          'preview_image_style' => '450x460_retina',
+          'progress_indicator' => 'throbber',
         ),
-        'type' => 'galleryformatter_default',
+        'type' => 'image',
         'weight' => 7,
       ),
       'line_item' => array(

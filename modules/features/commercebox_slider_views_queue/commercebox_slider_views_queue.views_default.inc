@@ -28,8 +28,8 @@ function commercebox_slider_views_queue_views_default_views() {
   $handler->display->display_options['cache']['type'] = 'none';
   $handler->display->display_options['query']['type'] = 'views_query';
   $handler->display->display_options['exposed_form']['type'] = 'basic';
-  $handler->display->display_options['pager']['type'] = 'none';
-  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['pager']['type'] = 'some';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '10';
   $handler->display->display_options['style_plugin'] = 'default';
   $handler->display->display_options['row_plugin'] = 'fields';
   /* Footer: Global: Text area */
@@ -37,24 +37,8 @@ function commercebox_slider_views_queue_views_default_views() {
   $handler->display->display_options['footer']['area']['table'] = 'views';
   $handler->display->display_options['footer']['area']['field'] = 'area';
   $handler->display->display_options['footer']['area']['label'] = 'new';
-  $handler->display->display_options['footer']['area']['content'] = l(t('new'), "data/new",
-    array(
-      'attributes' => array(
-        'class' => array('use-ajax', 'new-slide'),
-      )));
-  $handler->display->display_options['footer']['area']['format'] = 'full_html';
-  /* No results behavior: Global: Text area */
-  $handler->display->display_options['empty']['area']['id'] = 'area';
-  $handler->display->display_options['empty']['area']['table'] = 'views';
-  $handler->display->display_options['empty']['area']['field'] = 'area';
-  $handler->display->display_options['empty']['area']['label'] = 'link add';
-  $handler->display->display_options['empty']['area']['empty'] = TRUE;
-  $handler->display->display_options['empty']['area']['content'] = l(t('new'), "data/new",
-    array(
-      'attributes' => array(
-        'class' => array('use-ajax', 'new-slide'),
-      )));
-  $handler->display->display_options['empty']['area']['format'] = 'filtered_html';
+  $handler->display->display_options['footer']['area']['content'] = '<a href="/data/new" class=\'use-ajax new-slide\'> new </a>';
+  $handler->display->display_options['footer']['area']['format'] = 'filtered_html';
   /* Relationship: Nodequeue: Queue */
   $handler->display->display_options['relationships']['nodequeue_rel']['id'] = 'nodequeue_rel';
   $handler->display->display_options['relationships']['nodequeue_rel']['table'] = 'node';
@@ -132,8 +116,6 @@ function commercebox_slider_views_queue_views_default_views() {
     t('Desc'),
     t('new'),
     t('<a href="/data/new" class=\'use-ajax new-slide\'> new </a>'),
-    t('link add'),
-    t('<a href="/data/new/nojs" class="use-ajax new-slide"> new </a>'),
     t('queue'),
     t('.'),
     t(','),

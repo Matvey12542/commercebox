@@ -13,11 +13,11 @@ $plugin = array(
   'title'           => t('Catalog filters'),
   'single'          => TRUE,
   'content_types'   => array('no_context_content_type'),
-  'render callback' => 'commercebox_core_catalog_filters_render',
+  'render callback' => 'commercebox_catalog_filters_render',
   'category'        => array(t('CommerceBox'), -12),
   'defaults'         => array(),
   'edit form'        => array(
-    'commercebox_core_catalog_filters_edit_form' => array('title' => t('Catalog settings')),
+    'commercebox_catalog_filters_edit_form' => array('title' => t('Catalog settings')),
   ),
 );
 
@@ -36,13 +36,13 @@ $plugin = array(
  * @return Object
  *   An object with at least title and content.
  */
-function commercebox_core_catalog_filters_render($subtype, $conf, $args, $context = NULL) {
+function commercebox_catalog_filters_render($subtype, $conf, $args, $context = NULL) {
   $adapter = facetapi_adapter_load('search_api@product_display');
   $realm_name = 'block';
   $searcher = $adapter->getSearcher();
 
   $build = array();
-  foreach (variable_get('commercebox_core_filters_settings', array()) as $facet_name => $settings) {
+  foreach (variable_get('commercebox_filters_settings', array()) as $facet_name => $settings) {
     if ($settings['enabled']) {
       $delta = facetapi_build_delta($searcher, $realm_name, $facet_name);
       $hash = facetapi_hash_delta($delta);
@@ -74,12 +74,12 @@ function commercebox_core_catalog_filters_render($subtype, $conf, $args, $contex
 /**
  * Panels pane settings form.
  */
-function commercebox_core_catalog_filters_edit_form($form, &$form_state) {
+function commercebox_catalog_filters_edit_form($form, &$form_state) {
   return $form;
 }
 
 /**
  * Submit handler for commercebox_catalog_filters_edit_form().
  */
-function commercebox_core_catalog_filters_edit_form_submit($form, &$form_state) {
+function commercebox_catalog_filters_edit_form_submit($form, &$form_state) {
 }

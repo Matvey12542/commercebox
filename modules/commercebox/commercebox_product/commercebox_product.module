@@ -64,25 +64,3 @@ function commercebox_product_commerce_product_type_delete($product_type, $skip_r
     variable_del('node_preview_' . $product_type['type']);
   }
 }
-
-/**
- * Implements hook_views_default_views_alter().
- *
- * Add destination for views all product.
- */
-function commercebox_product_views_default_views_alter(&$views) {
-  if (isset($views['commerce_backoffice_products'])) {
-
-    $handler =& $views['commerce_backoffice_products']->display['default']->handler;
-    $handler->display->display_options['fields']['operations_dropbutton']['add_destination'] = 1;
-    unset($handler->display->display_options['filters']['combine']['id']);
-    unset($handler->display->display_options['filters']['combine']['table']);
-    unset($handler->display->display_options['filters']['combine']['field']);
-    unset($handler->display->display_options['filters']['combine']['operator']);
-    unset($handler->display->display_options['filters']['combine']['exposed']);
-    unset($handler->display->display_options['filters']['combine']['expose']['operator_id']);
-    unset($handler->display->display_options['filters']['combine']['expose']['operator']);
-    unset($handler->display->display_options['filters']['combine']['expose']['identifier']);
-
-  }
-}

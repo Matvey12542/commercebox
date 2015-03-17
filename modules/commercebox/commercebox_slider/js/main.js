@@ -3,19 +3,12 @@
 
   Drupal.behaviors.openPopup = {
     attach: function (context, settings) {
-//      if ($('body').find('#remove').length == 0) {
-//        console.log($('#remove'))
-//        $('#block-system-main').once().append('<div class="remove"> </div>');
-//      }
-//      $('#block-system-main').append('<div class="remove">1 </div>');
-//      console.log($('#remove'));
+
       $('.view-commercebox-slider a.edit-slide, a.new-slide').click(function (e) {
         e.preventDefault();
-//        if ($('.black-space').length == 0) {
-//          $('body').append("<div class='black-space'> </div>");
-//        }
-//        $('#remove').remove();
-
+        if ($('.black-space').length == 0) {
+          $('body').append("<div class='black-space'> </div>");
+        }
       });
 
       $('#remove a.close').click(function (e) {      // remove black area
@@ -23,30 +16,29 @@
         $(".black-space").remove();
       });
 
-//      if ($('#remove').length == 0) {               // remove black area
-//        $(".black-space").remove();
-//      }
+      if ($('#remove').length == 0) {               // remove black area
+        $(".black-space").remove();
+      }
 
       $('.view-commercebox-slider .delete-slide', $(context)).click(function () {
         var $del = $(this).parent().parent().parent();
         $del.remove();
       });
       $(".block-system .content").append("<span id='process'>save </span>");
-
-//      $('.form-submit').bind('click',function() {
-////        $.ajax({
-////          type: 'GET',
-////          url: '/data/remove/nojs',
-////          dataType: 'json',
-////          success: function () {
-////            $('#remove').remove();
-////          },
-////          error: function (xmlhttp) {
-////            alert(Drupal.ajaxError(xmlhttp, db.uri));
-////          }
-////        });
-////        $('#remove').remove();
-//        alert('buuu');
+//      $('.view-commercebox-slider .delete-slide', $(context)).click(function () {
+//        $this = $(this);
+//        console.log($this.attr('href'));
+//
+//      $.ajax({
+//        url: $this.attr('href'),
+//        dataType : "json",
+//        success: function (data) {
+//          var $del = $this.parent().parent().parent();
+//          console.log($del);
+//        //  $del.remove();
+//        }
+//        });
+//        return false;
 //      });
 
 // Drag and Drop Slider

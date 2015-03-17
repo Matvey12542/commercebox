@@ -5,3 +5,11 @@ core = 7.x
 
 dependencies[] = apps
 
+
+
+; Information added by drush on 2014-04-04
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "commercebox"
+datestamp = "1396617964"
+
